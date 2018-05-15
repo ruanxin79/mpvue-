@@ -54,8 +54,10 @@ export default {
             store.dispach('getUserInfo')
         },
         init () {
-            setPageTitle('想帮帮');
-            // this.getUserInfo()
+            setPageTitle('智享生活')
+            wx.navigateTo({
+                url: `/pages/order/main`
+            })
         },
         clickHandle(text, event){
           console.log(text, e)
