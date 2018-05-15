@@ -3,13 +3,23 @@
         <div class="main">
             <scroll-view class="inner" scroll-y="true">
                 <section class="banner-cont">
-                    <swiper
-                      autoplay interval duration="1">
+                    <swiper indicator-dots>
                         <swiper-item>
-                            <img src="https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_ca79a146.png" class="slide-image" />
+                            <img src="http://f12.baidu.com/it/u=2465775762,1509670197&fm=72" class="slide-image" />
+                        </swiper-item>
+                        <swiper-item>
+                            <img src="http://f12.baidu.com/it/u=2465775762,1509670197&fm=72" class="slide-image" />
+                        </swiper-item>
+                        <swiper-item>
+                            <img src="http://f12.baidu.com/it/u=2465775762,1509670197&fm=72" class="slide-image" />
                         </swiper-item>
                     </swiper>
                 </section>     
+                <section class="sp-line">
+                    <div class="line-r"></div>
+                    <div class="line-content">精品活动</div>
+                    <div class="line-r"></div>
+                </section>
                 <section class="activity">
                     <scroll-view class="activity-view" scroll-x="true">
                         <a href="http://www.baidu.com" class="activity-link">
@@ -23,10 +33,19 @@
                         </a>
                     </scroll-view>
                 </section>
+                <section class="sp-line">
+                    <div class="line-r"></div>
+                    <div class="line-content">全部商品</div>
+                    <div class="line-r"></div>
+                </section>
             </scroll-view>
- 
         </div>
-        <div class="bottom"></div>
+        <div class="bottom-menu">
+            <div class="icon-container">
+                <i class="icon-home"></i>
+                <i class="icon-user"></i>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -56,14 +75,6 @@ export default {
         init () {
             setPageTitle('想帮帮');
             // this.getUserInfo()
-        },
-        clickHandle(text, event){
-          console.log(text, e)
-        },
-        add(){
-          store.commit('INIT_PAGE', {count: ++this.count})
-
-          request('http://aaa.com.cn','get',{a: 1, b: 2})
         }
     },
     created () {
@@ -74,6 +85,7 @@ export default {
 
 <style scoped lang="scss">
     @import "../../common/style/global.scss";
+
     .container {
         position: fixed;
         height: 100%;
@@ -86,7 +98,7 @@ export default {
             bottom: 107px;          
         }
        
-        .bottom {
+        .bottom-menu {
             position: absolute;
             bottom: 0;
             width: 100%;
@@ -121,12 +133,34 @@ export default {
                 width: 288px;
                 height: 302px;
                 display: inline-block;
+                margin-left: 2px;
             }
         }
+
 
         .activat-img {
             width: 288px;
             height: 302px;
+        }
+        
+        .sp-line {
+            height: 62px;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: center;
+            .line-r {
+                width: 100px;
+                height: 30px;
+                border-bottom: 2px solid #c9c9c9;
+            }
+            .line-content {
+                font-size: 24px;
+                margin-left: 10px;
+                margin-right: 10px;
+                color: #000;
+                line-height: 62px;
+            }
         }
     }
 
