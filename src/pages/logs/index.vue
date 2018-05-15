@@ -23,7 +23,6 @@ export default {
   created () {
     const logs = (wx.getStorageSync('logs') || [])
     this.logs = logs.map(log => formatTime(new Date(log)))
-    console.log(this.logs)
   }
 }
 </script>

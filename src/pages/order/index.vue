@@ -14,13 +14,11 @@
                 </div>
                 <div class="selected defaultStyle">
                     <span>所在地区:</span>
-                    <p class="fa-angle-right">
-                        <picker mode="region" bindchange="bindRegionChange" :value="region" :custom-item="customItem">
-                            <view class="picker">
-                            {{region[0]}}，{{region[1]}}，{{region[2]}}
-                            </view>
+                    <p>
+                        <picker mode="region" @change="bindRegionChange" :value="region" :custom-item="customItem">
+                            <input class="picker" v-model="selected" disabled>
                         </picker>
-                        <i></i>
+                        <i class="icon-right-open"></i>
                     </p>
                 </div>
                 <div class="address defaultStyle">
@@ -31,6 +29,7 @@
                 </div>
                 
             </div>
+            <v-goods :data="goods"></v-goods>
             <!----------------------information--------------------------------- -->
         </div>   
     </div>
@@ -42,37 +41,24 @@ import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
 
-const cityArray = ['美国', '中国', '巴西', '日本']
-const cityArray2 = [
-            {
-                id: 0,
-                name: '美国'
-            },
-            {
-                id: 1,
-                name: '中国'
-            },
-            {
-                id: 2,
-                name: '巴西'
-            },
-            {
-                id: 3,
-                name: '日本'
-            }]
+import goodInfo from "../../components/goodInfo";
 export default {
     data () {
         return {
             text: '',
             collecUsertName: '',
-            selected: '',
             address: '',
-            cityArray: [],
-            cityArray2: [],
+            selected: '',
             index: 0,
             region: [],
-            customItem: '全部'
+            customItem: '全部',
+            goods: {
+                info:'test1111'
+            }
         }
+    },
+    components: {
+        'v-goods': goodInfo
     },
     computed: {
         count () {
@@ -91,10 +77,9 @@ export default {
 
           request('http://aaa.com.cn','get',{a: 1, b: 2})
         },
-        bindPickerChange: function(e) {
-            console.log(e)
-            //this.selected = e.detail.value
-
+        bindRegionChange: function(e) {
+           let _region = e.target.value;
+           this.selected = `${_region[0]} ${_region[1]} ${_region[2]}`
         },
     },
     created () {
@@ -119,19 +104,6 @@ export default {
             top: 0;
             bottom: 107px;        
         }
-        .fa-angle-right {
-            position: relative;
-            i {
-                position: absolute;
-                right: 0;
-                top: 10px;
-                width: 26px;
-                height: 26px;
-                border-bottom:5px solid $under-background; 
-                border-right:5px solid $under-background; 
-                transform: rotate(-45deg)
-            }
-        }
        /*  配送信息 */
         .information {
             margin-top: 10px;
@@ -147,6 +119,13 @@ export default {
                 p{   
                     flex: 1;
                     padding:0 5px;
+                    position: relative;
+                    i {
+                        position: absolute;
+                        right: 0;
+                        top: 10px;
+                        transform: scale(1.5)
+                    }
                     input,textarea {
                         width: 100%;  
                     }
