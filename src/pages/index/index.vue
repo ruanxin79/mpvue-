@@ -85,6 +85,8 @@ export default {
           store.commit('INIT_PAGE', {count: ++this.count})
 
           request('http://aaa.com.cn','get',{a: 1, b: 2})
+            setPageTitle('想帮帮');
+            // this.getUserInfo()
         }
     },
     created () {
