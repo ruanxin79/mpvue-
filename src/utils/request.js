@@ -7,7 +7,10 @@ export default function request (url, type='GET', params={}, headers) {
             headers: {
                 'Content-Type': type.toLowerCase() === 'get' ? 'application/x-www-form-urlencoded' : 'application/json'
             },
-            baseURL: "http://testscanadmin.lenovo.com.cn/index.php/Scanadmin",
+            //生产环境
+            // baseURL: "http://alyweixin.lenovo.com.cn/weixin/index.php",
+            //开发环境及测试环境
+            baseURL: "http://weixin.lenovo.com.cn/weixin/index.php",
         };
         //http://testscanadmin.lenovo.com.cn
         if (headers) {
