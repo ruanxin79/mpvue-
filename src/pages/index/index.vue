@@ -73,7 +73,6 @@ export default {
             store.dispach('getUserInfo')
         },
         init () {
-<<<<<<< HEAD
             setPageTitle('智享生活')
             wx.navigateTo({
                 url: `/pages/order/main`
@@ -86,10 +85,6 @@ export default {
           store.commit('INIT_PAGE', {count: ++this.count})
 
           request('http://aaa.com.cn','get',{a: 1, b: 2})
-=======
-            setPageTitle('想帮帮');
-            // this.getUserInfo()
->>>>>>> a0f73d6addf4ac92fe288afec5156ec4ce625ea2
         }
     },
     created () {
