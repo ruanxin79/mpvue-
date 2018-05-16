@@ -74,9 +74,9 @@ export default {
         },
         init () {
             setPageTitle('智享生活')
-            wx.navigateTo({
-                url: `/pages/order/main`
-            })
+            // wx.navigateTo({
+            //     url: `/pages/my-order/main`
+            // })
         },
         clickHandle(text, event){
           console.log(text, e)

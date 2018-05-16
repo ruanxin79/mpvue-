@@ -3,3 +3,7 @@
 .icon-user:before { content: '\e801'; } /* '' */
 .icon-user-outline:before { content: '\e802'; } /* '' */
 .icon-home:before { content: '\e803'; } /* '' */
+.icon-wallet:before { content: '\e804'; } /* '' */
+.icon-gift:before { content: '\e805'; } /* '' */
+.icon-truck:before { content: '\e807'; } /* '' */
+.icon-doc-text:before { content: '\f0f6'; } /* '' */
