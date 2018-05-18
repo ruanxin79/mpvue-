@@ -41,7 +41,7 @@ import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
 
-import goodInfo from "../../components/goodInfo";
+import goodInfo from "../../components/goodsInfo";
 export default {
     data () {
         return {

@@ -21,7 +21,7 @@
                         </li>
                     </ul>
                 </div>
-                <v-goods :data="orderList" :productStyle="productStyle"></v-goods>
+                <v-goods :data="orderList" :productStyle="productStyle" :type="type"></v-goods>
                 <div class="noOrder" v-if="orderList.length == 0">{{noOrderText}}</div>
                 <div class="load-more" v-if="loadMore">{{loadMoreText}}</div>
             </scroll-view>
@@ -35,7 +35,7 @@ import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
 
-import goodInfo from "../../components/goodInfo";
+import goodInfo from "../../components/goodsInfo";
 
 const mockData = [
                 {
@@ -67,8 +67,44 @@ const mockData = [
                     total: 3,
                     order_price: '2000.00',
                     order_num: '123121231431231231',
+                    status: 2
+                } ,{
+                    data: [{
+                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
+                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
+                            productId:'2iruoei8723894',
+                            product_price: '399.00'
+                        },
+                        {
+                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
+                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
+                            productId:'2iruo212ei8723894',
+                            product_price: '199.00'
+                        }
+                    ],
+                    total: 5,
+                    order_price: '18800.00',
+                    order_num: '123121231231231231',
                     status: 3
-                } 
+                },{
+                    data: [{
+                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
+                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
+                            productId:'2iruoei8723894',
+                            product_price: '399.00'
+                        },
+                        {
+                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
+                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
+                            productId:'2iruo212ei8723894',
+                            product_price: '199.00'
+                        }
+                    ],
+                    total: 5,
+                    order_price: '18800.00',
+                    order_num: '123121231231231231',
+                    status: 4
+                }
 
             ] 
 export default {
@@ -79,6 +115,7 @@ export default {
             loadMoreText: '没有更多订单',
             noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             productStyle: 'myOrder',
+            type: 1,
             titleItem: [
                 {type: 1,text: '全部',imgUrl: ''}, 
                 {type: 2,text: '代付款',imgUrl: '',num: 200}, //1
@@ -110,7 +147,7 @@ export default {
         /* 获取订单列表 */
         getOrderList (pageNum) {
             let _para = {
-                pageNum: 1,
+                pageNum: pageNum,
                 pageSize: 10,
                 type: 0
             }
@@ -119,12 +156,10 @@ export default {
             // TODO
         },
         clickTitle (item) {
-            wx.showToast({
-                title: item.text,
-                duration: 2000
-            })
+            this.type = item.type;
         },
         lower (e) {
+            console.log(1111)
             if(!this.loadMore) {
                 wx.showLoading({
                     title: '加载中',
@@ -133,9 +168,6 @@ export default {
             }
             
 
-        },
-        scroll () {
-            console.log(1)
         }
     },
     created () {

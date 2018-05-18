@@ -8,8 +8,7 @@
       </div>
       <div class="goods-title" 
         v-for="( k , v) in item.data" 
-        :key=" v " 
-        @click="handlerClick( k )">
+        :key=" v ">
         <div class="goods-img">
           <img :src="k.img" alt="" mode="scaleToFill">
         </div>
@@ -24,7 +23,7 @@
           :size="defaultSize" 
           :loading="loading" 
           :plain="plain"
-          :disabled="disabled" 
+          :disabled="disabled"     
           @click="handlerClick( item )"
           hover-class="other-button-hover">{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
       </div>
@@ -35,7 +34,7 @@
 <script>
 export default {
   name: 'goodInfo',
-  props: ['data','productStyle'],
+  props: ['data','productStyle','type'],
   data () {
     return {
       List: [],
@@ -47,19 +46,42 @@ export default {
       loading: false
     }
   },
+  filters: {
+   
+  },
   watch: {
     data () {
       this.List = this.data
+    },
+    type() {
+      this.List = this.filterArray(this.data);
     }
   },
   methods: {
     init () {
       this.List = this.data
     },
-    /* 跳转详情 */
-    handlerClick (item) {
-      console.log(item)
-    }
+    filterArray(array) {
+      let _newArr = []
+        for(const i of array) {
+          if(this.type == 1) {
+            _newArr = this.data;
+          }else if(i.status == this.type){
+            _newArr.push(i)
+          }  
+        }
+        return _newArr;
+    },
+    /* 追踪订单 、 立即支付  */
+    handlerClick (item) { 
+      if(item.status == 1) {
+        wx.navigateTo({
+          url: `/pages/orderdetail/main?orderId=${item.order_num}`
+        })
+      }else {
+        
+      }
+    },
   },
   created () {
       //this.init()
