@@ -1,71 +1,71 @@
 <template>
     <div class="container">
         <div class="main">
-            <scroll-view scroll-y class="inner" 
-            lower-threshold="50">
-            <!-- ----------------------orderdetail--------------------------------- -->
-            <div class="order-detail">
-                <div class="orderdetail-title">
-                    <div class="order-status">
-                        <span class="icon icon-clock"></span>
-                        <span>{{status}}</span>
+            <scroll-view scroll-y class="inner" lower-threshold="50"  v-if="orderList.data">
+                <!-- ----------------------orderdetail--------------------------------- -->
+                <div class="order-detail">
+                    <div class="orderdetail-title">
+                        <div class="order-status">
+                            <span class="icon icon-clock"></span>
+                            <span>{{status}}</span>
+                        </div>
+                        <div class="acInfo">{{info}}</div>
                     </div>
-                    <div class="acInfo">{{info}}</div>
-                </div>
-                <div class="order-logistics" v-if="orderList.logistics">
-                    <div class="logistics-status">
-                        <span>最新状态:</span>{{orderList.logistics}}
+                    <div class="order-logistics" v-if="orderList.logistics">
+                        <div class="logistics-status">
+                            <span>最新状态:</span>{{orderList.logistics}}
+                        </div>
+                        <div class="userInfo">
+                            <span>{{orderList.name}}:</span> {{orderList.phone}}
+                        </div>
                     </div>
-                    <div class="userInfo">
-                        <span>{{orderList.name}}:</span> {{orderList.phone}}
-                    </div>
-                </div>
-                <div class="order-list">
-                    <div v-for="(item, index) in orderList.data" :key="index">
-                        <div class="goods-title" 
-                            @click="handlerClick( item )">
-                            <div class="goods-img">
-                                <img :src="item.img" alt="" mode="scaleToFill">
+                    <div class="order-list">
+                        <div v-for="(item, index) in orderList.data" :key="index">
+                            <div class="goods-title" 
+                                @click="handlerClick( item )">
+                                <div class="goods-img">
+                                    <img :src="item.img" alt="" mode="scaleToFill">
+                                </div>
+                                <div class="goods-text">
+                                    <p class="goods-ellipsis">{{item.info}}</p>
+                                    <p class="goods-price left" v-if="productStyle !='myOrder'"><span>￥{{item.product_price}}</span></p>
+                                </div>
                             </div>
-                            <div class="goods-text">
-                                <p class="goods-ellipsis">{{item.info}}</p>
-                                <p class="goods-price left" v-if="productStyle !='myOrder'"><span>￥{{item.product_price}}</span></p>
+                            <div class="goods-tags">
+                                <span v-for="(j,ind) in item.promiseInfo" :key="ind">{{j.title_icon}}</span>
+                                <i class="icon icon-help-circled-alt"></i>
                             </div>
+                            <ul class="goods-service">
+                                <li v-for="(k,i) in item.service_goods" :key="i">
+                                <span class="left">{{k.title}}</span>
+                                <span class="right"><s v-if="k.gift == 1" class="line-through">￥{{k.priMoney}}</s><s>￥{{k.price}}</s></span>
+                                </li>
+                            </ul>
+                            <div class="goods-explain">
+                                说明: {{item.explain}}
+                            </div>
+                            <!-- <div class="goods-line"></div> -->
                         </div>
-                        <div class="goods-tags">
-                            <span v-for="(j,ind) in item.promiseInfo" :key="ind">{{j.title_icon}}</span>
-                            <i class="icon icon-help-circled-alt"></i>
-                        </div>
-                        <ul class="goods-service">
-                            <li v-for="(k,i) in item.service_goods" :key="i">
-                               <span class="left">{{k.title}}</span>
-                               <span class="right"><s v-if="k.gift == 1" class="line-through">￥{{k.priMoney}}</s><s>￥{{k.price}}</s></span>
-                            </li>
-                        </ul>
-                        <div class="goods-explain">
-                            说明: {{item.explain}}
-                        </div>
-                        <!-- <div class="goods-line"></div> -->
+                    </div>
+                    <div class="order-price">
+                        <p class="zxg_discount" v-if="orderList.zxg_discount">尊享卡优惠<span>￥{{orderList.zxg_discount}}</span></p>
+                        <p class="service_price" v-if="orderList.service_price">客服调价<span>￥{{orderList.service_price}}</span></p>
+                        <p class="total_price" v-if="orderList.total_price">合计（免运费）<span>￥{{orderList.total_price}}</span></p>
+                    </div>
+                    <div class="goods-line"><i></i></div>
+                    <div class="payment">
+                        <p>需支付<span>￥{{orderList.total_price}}</span></p>
                     </div>
                 </div>
-                <div class="order-price">
-                    <p class="zxg_discount" v-if="orderList.zxg_discount">尊享卡优惠<span>￥{{orderList.zxg_discount}}</span></p>
-                    <p class="service_price" v-if="orderList.service_price">客服调价<span>￥{{orderList.service_price}}</span></p>
-                    <p class="total_price" v-if="orderList.total_price">合计（免运费）<span>￥{{orderList.total_price}}</span></p>
-                </div>
-                <div class="goods-line"><i></i></div>
-                <div class="payment">
-                    <p>需支付<span>￥{{orderList.total_price}}</span></p>
-                </div>
-            </div>
-            <div class="order-msg">
-                <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderList.order_num}}</span></p>
-                <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderList.order_time}}</span></p>
-                <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.order_receipts}}</span></p>
-                <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderList.order_mark}}</span></p>
-            </div> 
+                <div class="order-msg">
+                    <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderList.order_num}}</span></p>
+                    <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderList.order_time}}</span></p>
+                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.order_receipts}}</span></p>
+                    <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderList.order_mark}}</span></p>
+                </div> 
             </scroll-view> 
-            <!----------------------orderdetail--------------------------------- -->
+            <div class="noOrder" v-else>{{noOrderText}}</div>
+             <!----------------------orderdetail--------------------------------- -->
         </div>   
     </div>
 </template>
@@ -356,6 +356,7 @@ export default {
     data () {
         return {
             info: '好商品不等人，请尽快完成付款',
+            noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             orderList: {},
             status: '',
             loadMore: false,
@@ -389,7 +390,7 @@ export default {
                 type: 2 ,//未付款
                 orderId: this.$mp.query.orderId || ''
             }
-            this.orderList = mockData;
+            //this.orderList = mockData;
         },
         setStatus(status) {
             let x = '';
@@ -620,6 +621,15 @@ export default {
             p {
                 padding: 10px 0;
             }
+        }
+        .noOrder {
+            font-size: $font-size;
+            color: #999999;
+            text-align: center;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
         }
 
     }

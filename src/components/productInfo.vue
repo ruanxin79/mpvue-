@@ -1,24 +1,24 @@
 <template>
-  <div class="goodsiInfo">
-    <div class="goods-list" v-for="( item, index ) in List" :key=" index ">
-      <div class="goods-status">
+  <div class="productInfo">
+    <div class="product-list" v-for="( item, index ) in List" :key=" index ">
+      <div class="product-status">
         <span v-if="item.status == 1 ">待付款</span>
         <span v-if="item.status == 2 ">待发货</span>
         <span v-if="item.status == 3 ">待收货</span>
       </div>
-      <div class="goods-title" 
+      <div class="product-title" 
         v-for="( k , v) in item.data" 
         :key=" v ">
-        <div class="goods-img">
+        <div class="product-img">
           <img :src="k.img" alt="" mode="scaleToFill">
         </div>
-        <div class="goods-text">
-          <p class="goods-ellipsis">{{k.info}}</p>
-          <p class="goods-price right" v-if=" v == item.data.length-1 && productStyle =='myOrder'">共 <span>{{item.data.length}}</span> 件商品 实付款 : <span>￥{{item.order_price}}</span></p>
-          <!-- <p class="goods-price left" v-if="productStyle !='myOrder'"><span>￥{{k.product_price}}</span></p> -->
+        <div class="product-text">
+          <p class="product-ellipsis">{{k.info}}</p>
+          <p class="product-price right" v-if=" v == item.data.length-1 && productStyle =='myOrder'">共 <span>{{item.data.length}}</span> 件商品 实付款 : <span>￥{{item.order_price}}</span></p>
+          <!-- <p class="product-price left" v-if="productStyle !='myOrder'"><span>￥{{k.product_price}}</span></p> -->
         </div>
       </div>
-      <div class="goods-btn" v-if="productStyle =='myOrder'">
+      <div class="product-btn" v-if="productStyle =='myOrder'">
         <button :type="item.status == 1 ? 'warn' : 'default' " 
           :size="defaultSize" 
           :loading="loading" 
@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: 'goodInfo',
+  name: 'productInfo',
   props: ['data','productStyle','type'],
   data () {
     return {
@@ -95,11 +95,11 @@ export default {
 
 <style scoped lang="scss">
 @import '../common/style/global.scss';
-.goods-list {
+.product-list {
   margin-top: 20px;
   padding: 0 $padding-x; 
   background-color: #ffffff;
-  .goods-btn {
+  .product-btn {
     width: 100%;
     height: 95px;
     padding: 30px 0; 
@@ -117,19 +117,19 @@ export default {
   }
   
  
-  .goods-status {
+  .product-status {
     text-align: right;
     padding: 35px;
     span {
       font-size: 26px; 
     }
   }
-  .goods-title {
+  .product-title {
     display: flex;
     padding: 35px 10px;
     border-top: 1px solid $under-background; 
     border-bottom: 1px solid $under-background; 
-    .goods-img {
+    .product-img {
       width: 195px;
       height: 125px; 
       img {
@@ -139,14 +139,14 @@ export default {
         transform: scale(.85)
       }
     }
-    .goods-text {
+    .product-text {
       flex: 1;
       font-size: 24px;
       padding-left: 30px; 
       span {
         color: $red;
       }
-      .goods-ellipsis {
+      .product-ellipsis {
         word-wrap:break-word;
         display: -webkit-box;
         overflow: hidden;
@@ -155,7 +155,7 @@ export default {
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
       }
-      .goods-price {
+      .product-price {
         color: #666666;
         margin-top: 20px;
       }

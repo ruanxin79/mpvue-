@@ -21,7 +21,7 @@
                         </li>
                     </ul>
                 </div>
-                <v-goods :data="orderList" :productStyle="productStyle" :type="type"></v-goods>
+                <v-product :data="orderList" :productStyle="productStyle" :type="type"></v-product>
                 <div class="noOrder" v-if="orderList.length == 0">{{noOrderText}}</div>
                 <div class="load-more" v-if="loadMore">{{loadMoreText}}</div>
             </scroll-view>
@@ -35,7 +35,7 @@ import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
 
-import goodInfo from "../../components/goodsInfo";
+import productInfo from "../../components/productInfo";
 
 const mockData = [
                 {
@@ -126,7 +126,7 @@ export default {
         }
     },
     components: {
-       'v-goods': goodInfo
+       'v-product': productInfo
     },
     watch: {
         orderList () {}

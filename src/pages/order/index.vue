@@ -29,7 +29,7 @@
                 </div>
                 
             </div>
-            <v-goods :data="goods"></v-goods>
+            <v-product :data="productData"></v-product>
             <!----------------------information--------------------------------- -->
         </div>   
     </div>
@@ -41,7 +41,7 @@ import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
 
-import goodInfo from "../../components/goodsInfo";
+import productInfo from "../../components/productInfo";
 export default {
     data () {
         return {
@@ -52,13 +52,13 @@ export default {
             index: 0,
             region: [],
             customItem: '全部',
-            goods: {
+            productData: {
                 info:'test1111'
             }
         }
     },
     components: {
-        'v-goods': goodInfo
+        'v-product': productInfo
     },
     computed: {
         count () {
