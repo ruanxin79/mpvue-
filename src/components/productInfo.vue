@@ -18,14 +18,23 @@
           <!-- <p class="product-price left" v-if="productStyle !='myOrder'"><span>￥{{k.product_price}}</span></p> -->
         </div>
       </div>
-      <div class="product-btn" v-if="productStyle =='myOrder'">
+      <div class="product-btn" v-if="productStyle =='myOrder' && item.status == 1">
         <button :type="item.status == 1 ? 'warn' : 'default' " 
           :size="defaultSize" 
           :loading="loading" 
           :plain="plain"
           :disabled="disabled"     
           @click="handlerClick( item )"
-          hover-class="other-button-hover">{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
+          hover-class="other-button-hover"
+          v-if="item.status == 1"
+          >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
+        <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
+          :size="defaultSize" 
+          :loading="loading" 
+          :plain="plain"
+          :disabled="disabled"     
+          @click="handlerClick( item )"
+          hover-class="other-button-hover">{{item.status == 1 ? '立即支付' : '追踪订单'}}</button> -->
       </div>
     </div>
   </div>

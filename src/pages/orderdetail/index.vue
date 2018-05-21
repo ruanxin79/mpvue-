@@ -1,7 +1,9 @@
 <template>
     <div class="container">
         <div class="main">
-            <scroll-view scroll-y class="inner" lower-threshold="50"  v-if="orderList.data">
+            <scroll-view scroll-y class="inner"
+            @scrolltolower="lower" 
+            lower-threshold="50"  v-if="orderList.data">
                 <!-- ----------------------orderdetail--------------------------------- -->
                 <div class="order-detail">
                     <div class="orderdetail-title">
@@ -37,8 +39,8 @@
                             </div>
                             <ul class="goods-service">
                                 <li v-for="(k,i) in item.service_goods" :key="i">
-                                <span class="left">{{k.title}}</span>
-                                <span class="right"><s v-if="k.gift == 1" class="line-through">￥{{k.priMoney}}</s><s>￥{{k.price}}</s></span>
+                                    <span class="left">{{k.title}}</span>
+                                    <span class="right"><s v-if="k.gift == 1" class="line-through">￥{{k.priMoney}}</s><s>￥{{k.price}}</s></span>
                                 </li>
                             </ul>
                             <div class="goods-explain">
@@ -133,12 +135,6 @@ const mockData =
                         price: 0, 
                         priMoney: 199,
                         title: '上面服务1年',
-                        gift: 1
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '整机清洁1年',
                         gift: 1
                     }
                 ]
@@ -387,10 +383,11 @@ export default {
             let _para = {
                 pageNum: pageNum,
                 pageSize: 10,
-                type: 2 ,//未付款
+                type: 2 +'未付款',//未付款
                 orderId: this.$mp.query.orderId || ''
             }
-            //this.orderList = mockData;
+            console.log(_para)
+            this.orderList = mockData;
         },
         setStatus(status) {
             let x = '';
@@ -407,6 +404,21 @@ export default {
                     break;   
             }
             return x;   
+        },
+        lower (e) {
+
+            wx.showLoading({
+                    title: '加载中',
+                    duration: 2000
+                })
+            if(!this.loadMore) {
+                wx.showLoading({
+                    title: '加载中',
+                    duration: 2000
+                })
+            }
+            
+
         }
     },
     created () {
@@ -560,13 +572,14 @@ export default {
             padding: 0 $padding-x;
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
+            justify-content: space-between;
             font-size: 22px;
             color: #999999;
+            display: grid;
+            grid-template-columns: 49% 49%;
             li {
                 display: flex;
                 justify-content: space-between;
-                width: 335px;
                 border: 1px solid #828282;
                 border-radius: 10px;
                 padding: 10px 0;

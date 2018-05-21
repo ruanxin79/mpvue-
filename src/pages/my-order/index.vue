@@ -159,7 +159,11 @@ export default {
             this.type = item.type;
         },
         lower (e) {
-            console.log(1111)
+            console.log('上拉加载')
+            wx.showLoading({
+                    title: '加载中',
+                    duration: 2000
+                })
             if(!this.loadMore) {
                 wx.showLoading({
                     title: '加载中',
