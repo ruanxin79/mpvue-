@@ -76,8 +76,9 @@
 
 import store from '../../store'
 
-import {setPageTitle} from '../../utils/wx'
+import {setPageTitle,getUserInfo} from '../../utils/wx'
 
+import {getTreeNode} from '../../utils/api' 
 const mockData = 
         {  
         data:[{
@@ -346,7 +347,7 @@ const mockData =
         logistics: '北京市顺义区分拣中心已发货',
         name: '小马哥',
         phone: '186****5679',
-        status: 3
+        status: 1
     }
 export default {
     data () {
@@ -372,7 +373,6 @@ export default {
             wx.showLoading({
                 title: '加载中',
             })
-
             setTimeout(() => {
                 wx.hideLoading()
                 this.getOrderList(1);
@@ -383,13 +383,13 @@ export default {
             let _para = {
                 pageNum: pageNum,
                 pageSize: 10,
-                type: 2 +'未付款',//未付款
+                type: this.setStatus(mockData.status),
                 orderId: this.$mp.query.orderId || ''
             }
             console.log(_para)
             this.orderList = mockData;
         },
-        setStatus(status) {
+        setStatus (status) {
             let x = '';
             let n = status;
             switch (n) {
@@ -417,15 +417,13 @@ export default {
                     duration: 2000
                 })
             }
-            
-
         }
     },
     created () {
        
     },
     mounted () {
-        this.init()
+        this.init();
     }
 }
 </script>

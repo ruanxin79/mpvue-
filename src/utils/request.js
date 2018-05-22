@@ -10,7 +10,7 @@ export default function request (url, type='GET', params={}, headers) {
             //生产环境
             // baseURL: "http://alyweixin.lenovo.com.cn/weixin/index.php",
             //开发环境及测试环境
-            baseURL: "http://weixin.lenovo.com.cn/weixin/index.php",
+            baseURL: "http://smart.lenovo.com.cn"
         };
         //http://testscanadmin.lenovo.com.cn
         if (headers) {

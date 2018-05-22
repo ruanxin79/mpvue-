@@ -1,6 +1,6 @@
 import request from './request'
 
-export const getTreeNode = (url, type, params) => request(url, type, params);
+export const getOpenId = (params) => request('/v1/userOpenId', 'get', params);
 
 
 

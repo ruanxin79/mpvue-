@@ -12,10 +12,10 @@
                     <ul class="title-item">
                         <li v-for="(item,index) in titleItem" :key='index' @click="clickTitle(item)">
                             <!-- <img :src="imgUrl" alt=""> -->
-                            <span class="icon" :class="item.type == 1 ? 'icon-doc-text':''" v-if="item.type == 1"></span>
-                            <span class="icon" :class="item.type == 2 ? 'icon-wallet':''"  v-if="item.type == 2"></span>
-                            <span class="icon" :class="item.type == 3 ? 'icon-gift':''"  v-if="item.type == 3"></span>
-                            <span class="icon" :class="item.type == 4 ? 'icon-truck':''"  v-if="item.type == 4"></span>
+                            <span class="icon" :class="item.type === 0 ? 'icon-doc-text':''" v-if="item.type === 0"></span>
+                            <span class="icon" :class="item.type === 1 ? 'icon-wallet':''"  v-if="item.type === 1"></span>
+                            <span class="icon" :class="item.type === 2 ? 'icon-gift':''"  v-if="item.type === 2"></span>
+                            <span class="icon" :class="item.type === 3 ? 'icon-truck':''"  v-if="item.type === 3"></span>
                             <span>{{item.text}}</span>
                             <i v-if="item.num">{{item.num}}</i>
                         </li>
@@ -117,10 +117,10 @@ export default {
             productStyle: 'myOrder',
             type: 1,
             titleItem: [
-                {type: 1,text: '全部',imgUrl: ''}, 
-                {type: 2,text: '代付款',imgUrl: '',num: 200}, //1
-                {type: 3,text: '待发货',imgUrl: ''}, //2
-                {type: 4,text: '待收货',imgUrl: ''} //3
+                {type: 0,text: '全部',imgUrl: ''}, 
+                {type: 1,text: '代付款',imgUrl: '',num: 200}, //1
+                {type: 2,text: '待发货',imgUrl: ''}, //2
+                {type: 3,text: '待收货',imgUrl: ''} //3
             ],
             orderList: []
         }

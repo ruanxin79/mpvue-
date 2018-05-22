@@ -6,7 +6,8 @@ import mutations from './mutations'
 Vue.use(Vuex)
 
 const state = {
-	count: 0
+	userInfo: {},
+	loginCode: ""
 };
 
 export default new Vuex.Store({
