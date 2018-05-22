@@ -2,24 +2,10 @@
     <div class="container">
         <div class="main">
             <scroll-view class="inner" scroll-y="true">
-                <section class="banner-cont">
-                    <swiper indicator-dots>
-                        <swiper-item>
-                            <img src="http://f12.baidu.com/it/u=2465775762,1509670197&fm=72" class="slide-image" />
-                        </swiper-item>
-                        <swiper-item>
-                            <img src="http://f12.baidu.com/it/u=2465775762,1509670197&fm=72" class="slide-image" />
-                        </swiper-item>
-                        <swiper-item>
-                            <img src="http://f12.baidu.com/it/u=2465775762,1509670197&fm=72" class="slide-image" />
-                        </swiper-item>
-                    </swiper>
-                </section>     
-                <section class="sp-line">
-                    <div class="line-r"></div>
-                    <div class="line-content">精品活动</div>
-                    <div class="line-r"></div>
-                </section>
+                <Slide :data="productImages" />       
+
+                <CutLine content="精品活动" />
+
                 <section class="activity">
                     <scroll-view class="activity-view" scroll-x="true">
                         <a href="http://www.baidu.com" class="activity-link">
@@ -33,10 +19,14 @@
                         </a>
                     </scroll-view>
                 </section>
-                <section class="sp-line">
-                    <div class="line-r"></div>
-                    <div class="line-content">全部商品</div>
-                    <div class="line-r"></div>
+                <CutLine content="热门商品" />
+
+                <section class="product-containter">
+                    <ul class="productlist">
+                        <li v-for="item in productList" :key="item.id" @click="redirectToDetail(item.id, item.product_name)">
+                            <ProductItem :data="item" />
+                        </li>
+                    </ul>
                 </section>
             </scroll-view>
         </div>
@@ -55,26 +45,98 @@ import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
 
-import {getTreeNode} from '../../utils/api' 
+import ProductItem from '../../components/ProductItem'
+
+import Slide from '../../components/Slide'
+
+import CutLine from '../../base/CutLine'
 
 export default {
     data () {
         return {
-          
+            productImages: [
+                {
+                    image: "http://f12.baidu.com/it/u=2465775762,1509670197&fm=72",
+                    key: '123'
+                },
+                {
+                    image: "http://f12.baidu.com/it/u=2465775762,1509670197&fm=72",
+                    key: '456'
+                }
+            ]          
         }
     },
+    components: {
+        ProductItem,
+        CutLine,
+        Slide
+    },
     computed: {
-        count () {
-            return store.state.count
+        productList () {
+
+            //最终数据处理成这个样子
+            return [
+                {
+                    id: 1,
+                    sale_point_one: '联想笔记本就是好哈哈哈哈',
+                    product_name: 'YOGA I5PRO(I7)',
+                    other_sale_point: [
+                        {
+                            key: '123',
+                            name: 'Itel I7低功耗版'
+                        },
+                        {
+                            key: '456',
+                            name: '内存4G'
+                        },
+                        {
+                            key: '789',
+                            name: 'Windows10'
+                        },
+                        {
+                            key: '1123123',
+                            name: '赠鼠标键盘'
+                        }
+                    ],
+                    price: '9199.00'
+                },
+                {
+                    id: 2,
+                    sale_point_one: '联想笔记本就是好哈哈哈哈',
+                    product_name: 'YOGA I5PRO(I7)',
+                    other_sale_point: [
+                        {
+                            key: '123',
+                            name: 'Itel I7低功耗版'
+                        },
+                        {
+                            key: '456',
+                            name: '内存4G'
+                        },
+                        {
+                            key: '789',
+                            name: 'Windows10'
+                        },
+                        {
+                            key: '1123123',
+                            name: '赠鼠标键盘'
+                        }
+                    ],
+                    price: '9199.00'
+                }
+            ]
         }
     },
     methods: {
         getUserInfo () {
-            store.dispach('getUserInfo')
+            store.dispatch('initPage', {})
         },
         init () {
             setPageTitle('想帮帮');
-            // this.getUserInfo()
+            this.getUserInfo()
+        },
+        redirectToDetail (id, productName) {
+            wx.navigateTo({url: `/pages/productDetail/main?productId=${id}&productName=${productName}`})
         }
     },
     created () {
@@ -104,25 +166,12 @@ export default {
             width: 100%;
             height: 106px;
             z-index: 10px;
+            background-color: #f9f9f9;
         }
 
         .inner {
             width: 100%;
             height: 100%;
-        }
-
-
-
-        .banner-cont {
-            height: 370px;
-            width: 100%;         
-        }
-        .slide-image {
-            height: 370px;
-            width: 100%;            
-        }
-        swiper {
-            height:370px;
         }
 
         .activity-view {
@@ -137,31 +186,11 @@ export default {
             }
         }
 
-
         .activat-img {
             width: 288px;
             height: 302px;
         }
         
-        .sp-line {
-            height: 62px;
-                display: flex;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                justify-content: center;
-            .line-r {
-                width: 100px;
-                height: 30px;
-                border-bottom: 2px solid #c9c9c9;
-            }
-            .line-content {
-                font-size: 24px;
-                margin-left: 10px;
-                margin-right: 10px;
-                color: #000;
-                line-height: 62px;
-            }
-        }
     }
 
 </style>

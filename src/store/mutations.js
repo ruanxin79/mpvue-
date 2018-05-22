@@ -1,7 +1,10 @@
 import * as types from './mutation-types'
 export default {
-    //初始化页面，获取问卷信息
-    [types.INIT_PAGE] (state, {count}) {
-        state.count = count;
+    [types.INIT_USERINFO] (state, {userInfo}) {
+    	state.userInfo = userInfo;
+    },
+    [types.SAVE_LOGIN_CODE] (state, {loginCode}) {
+    	console.log(loginCode)
+    	state.loginCode = loginCode;
     }
 }

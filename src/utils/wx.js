@@ -2,16 +2,20 @@ export function setPageTitle (title) {
     wx.setNavigationBarTitle({title})    
 }
 
-export function getUserInfo () {
-	return new Promise((resolve, reject) =>{
+export function getLoginCode () {
+	return new Promise((resolve, reject) => {
 		wx.login({
-			success: () => {
-				wx.getUserInfo({
-					success: (res) => resolve(res.userInfo),
-					fail: (err) => reject(err)
-				})
-			},
+			success: (res) => resolve(res.code),
 			fail: (err) => reject(err)
 		})	
 	})
+}
+
+export function getUserInfo () {
+	return new Promise((resolve, reject) => {
+		wx.getUserInfo({
+			success: (res) => resolve(res.userInfo),
+			fail: (err) => reject(err)
+		})
+	})	
 }
