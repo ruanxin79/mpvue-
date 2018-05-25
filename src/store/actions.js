@@ -14,7 +14,7 @@ export const initPage = ({commit}, {}) => {
     	}).catch((e) => {
     		console.log(e)
     	})
-    })
+	})
 
 
 }

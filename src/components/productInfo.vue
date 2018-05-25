@@ -2,32 +2,30 @@
   <div class="productInfo">
     <div class="product-list" v-for="( item, index ) in List" :key=" index ">
       <div class="product-status">
-        <span v-if="item.status == 1 ">待付款</span>
-        <span v-if="item.status == 2 ">待发货</span>
-        <span v-if="item.status == 3 ">待收货</span>
+        <span>{{stateItem[item.status]}}</span>
       </div>
       <div class="product-title" 
-        v-for="( k , v) in item.data" 
-        :key=" v ">
+        @click="handlerClick( item )">
         <div class="product-img">
-          <img :src="k.img" alt="" mode="scaleToFill">
+          <img :src="item.product_thumb" alt="" mode="scaleToFill">
         </div>
         <div class="product-text">
-          <p class="product-ellipsis">{{k.info}}</p>
-          <p class="product-price right" v-if=" v == item.data.length-1 && productStyle =='myOrder'">共 <span>{{item.data.length}}</span> 件商品 实付款 : <span>￥{{item.order_price}}</span></p>
-          <!-- <p class="product-price left" v-if="productStyle !='myOrder'"><span>￥{{k.product_price}}</span></p> -->
+          <p class="product-ellipsis">{{item.product_full_name}}</p>
+          <!-- <p class="product-price right" v-if=" v == item.length-1 && productStyle =='myOrder'">共 <span>{{item.data.length}}</span> 件商品 实付款 : <span>￥{{item.order_price}}</span></p> -->
+          <!-- <p class="product-price left" v-if="productStyle !='myOrder'"><span>￥{{item.total}}</span></p> -->
         </div>
       </div>
-      <div class="product-btn" v-if="productStyle =='myOrder' && item.status == 1">
-        <button :type="item.status == 1 ? 'warn' : 'default' " 
+      <div class="product-btn" v-if="productStyle =='myOrder' ">
+        <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
+        && item.status == 1
           :size="defaultSize" 
           :loading="loading" 
           :plain="plain"
-          :disabled="disabled"     
-          @click="handlerClick( item )"
+          :disabled="disabled" 
           hover-class="other-button-hover"
           v-if="item.status == 1"
-          >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
+          @click="payBtn"
+          >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button> -->
         <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
           :size="defaultSize" 
           :loading="loading" 
@@ -47,6 +45,7 @@ export default {
   data () {
     return {
       List: [],
+      stateItem: ['交易关闭','待付款','已付款','已发货','交易成功','退款','异常'],
       defaultSize: 'default',
       primarySize: 'default',
       warnSize: 'default',
@@ -55,12 +54,13 @@ export default {
       loading: false
     }
   },
-  filters: {
-   
-  },
   watch: {
     data () {
-      this.List = this.data
+      this.List = this.data.orderList;
+      console.log(this.List)
+      this.List.map((k) => {
+        k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
+      })
     },
     type() {
       this.List = this.filterArray(this.data);
@@ -73,7 +73,7 @@ export default {
     filterArray(array) {
       let _newArr = []
         for(const i of array) {
-          if(this.type == 1) {
+          if(this.type === 0) {
             _newArr = this.data;
           }else if(i.status == this.type){
             _newArr.push(i)
@@ -83,14 +83,13 @@ export default {
     },
     /* 追踪订单 、 立即支付  */
     handlerClick (item) { 
-      if(item.status == 1) {
-        wx.navigateTo({
-          url: `/pages/orderdetail/main?orderId=${item.order_num}`
-        })
-      }else {
-        
-      }
+      wx.navigateTo({
+        url: `/pages/orderdetail/main?orderId=${item.order_num}`
+      })
     },
+    payBtn () {
+      this.$emit('showModal');
+    }
   },
   created () {
       //this.init()

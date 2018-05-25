@@ -10,22 +10,26 @@
                         <span>共 {{num}} 单</span>
                     </h5>
                     <ul class="title-item">
-                        <li v-for="(item,index) in titleItem" :key='index' @click="clickTitle(item)">
-                            <!-- <img :src="imgUrl" alt=""> -->
-                            <span class="icon" :class="item.type === 0 ? 'icon-doc-text':''" v-if="item.type === 0"></span>
-                            <span class="icon" :class="item.type === 1 ? 'icon-wallet':''"  v-if="item.type === 1"></span>
-                            <span class="icon" :class="item.type === 2 ? 'icon-gift':''"  v-if="item.type === 2"></span>
-                            <span class="icon" :class="item.type === 3 ? 'icon-truck':''"  v-if="item.type === 3"></span>
-                            <span>{{item.text}}</span>
-                            <i v-if="item.num">{{item.num}}</i>
-                        </li>
+                        <li><span class="icon icon-doc-text"></span><span>全部</span></li>
+                        <li><span class="icon icon-wallet"></span><span>待付款</span><i v-if="orderList.payOrder && orderList.payOrder != 0">{{orderList.payOrder}}</i></li>
+                        <li><span class="icon icon-gift"></span><span>待发货</span><i v-if="orderList.deliverOrder && orderList.deliverOrder != 0">{{orderList.deliverOrder}}</i></li>
+                        <li><span class="icon icon-truck"></span><span>待收货</span><i v-if="orderList.collectOrder && orderList.collectOrder != 0">{{orderList.collectOrder}}</i></li>
                     </ul>
                 </div>
-                <v-product :data="orderList" :productStyle="productStyle" :type="type"></v-product>
+                <ProductInfo 
+                :data="orderList" 
+                :productStyle="productStyle" 
+                :type="status"
+                @showModal="showModal"></ProductInfo>
                 <div class="noOrder" v-if="orderList.length == 0">{{noOrderText}}</div>
                 <div class="load-more" v-if="loadMore">{{loadMoreText}}</div>
             </scroll-view>
-        </div>   
+        </div> 
+        <PayModal 
+            :isShowModal="isShowPayModal"
+            @hideModal="payModalCancel"
+            @getOrderList='init'>
+        </PayModal>
     </div>
 </template>
 
@@ -33,103 +37,62 @@
 
 import store from '../../store'
 
-import {setPageTitle} from '../../utils/wx'
+import {setPageTitle,GetOrderList} from '../../utils/wx'
 
-import productInfo from "../../components/productInfo";
+import ProductInfo from "../../components/productInfo"
+import PayModal from '../../components/PayModal'
+const mockData = {
+    "status_code": 200,
+    "data": {
+        "orderList": [
+            {
+                "code": "2017042517321097485057",
+                "original_total": "198",
+                "total": "198.00",
+                "status": 0,
+                "product_id": 40,
+                "product_thumb": "/a/b/c/d",
+                "product_type": "computer",
+                "product_full_name": "lenovo笔记本"
+            },
+            {
+                "code": "2017042517314448979850",
+                "original_total": "198",
+                "total": "198.00",
+                "status": 0,
+                "product_id": 40,
+                "product_thumb": "/a/b/c/d",
+                "product_type": "computer",
+                "product_full_name": "lenovo笔记本"
+            }
+        ],
+        "payOrder": 0,
+        "deliverOrder": 0,
+        "collectOrder": 0,
+        "successOrder": 1
+    },
+    "message": "Success"
+}
 
-const mockData = [
-                {
-                    data: [{
-                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                            productId:'2iruoei8723894',
-                            product_price: '399.00'
-                        },
-                        {
-                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                            productId:'2iruo212ei8723894',
-                            product_price: '199.00'
-                        }
-                    ],
-                    total: 5,
-                    order_price: '18800.00',
-                    order_num: '123121231231231231',
-                    status: 1
-                }, {
-                    data: [{
-                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                            img: 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2847717430,1606509281&fm=58&s=0272C8328CA07D0147EC71C6000030B0&bpow=121&bpoh=75',
-                            productId:'2iruo2sd12ei8723894',
-                            product_price: '699.00'
-                        }
-                    ],
-                    total: 3,
-                    order_price: '2000.00',
-                    order_num: '123121231431231231',
-                    status: 2
-                } ,{
-                    data: [{
-                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                            productId:'2iruoei8723894',
-                            product_price: '399.00'
-                        },
-                        {
-                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                            productId:'2iruo212ei8723894',
-                            product_price: '199.00'
-                        }
-                    ],
-                    total: 5,
-                    order_price: '18800.00',
-                    order_num: '123121231231231231',
-                    status: 3
-                },{
-                    data: [{
-                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                            productId:'2iruoei8723894',
-                            product_price: '399.00'
-                        },
-                        {
-                            info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                            img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                            productId:'2iruo212ei8723894',
-                            product_price: '199.00'
-                        }
-                    ],
-                    total: 5,
-                    order_price: '18800.00',
-                    order_num: '123121231231231231',
-                    status: 4
-                }
-
-            ] 
 export default {
     data () {
         return {
-            num: 18,
+            num: '',
             loadMore: false,
             loadMoreText: '没有更多订单',
             noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             productStyle: 'myOrder',
-            type: 1,
-            titleItem: [
-                {type: 0,text: '全部',imgUrl: ''}, 
-                {type: 1,text: '代付款',imgUrl: '',num: 200}, //1
-                {type: 2,text: '待发货',imgUrl: ''}, //2
-                {type: 3,text: '待收货',imgUrl: ''} //3
-            ],
-            orderList: []
+            status: 1,
+            orderList: [],
+            isShowPayModal: false
         }
     },
     components: {
-       'v-product': productInfo
+       ProductInfo,
+       PayModal
     },
     watch: {
-        orderList () {}
+        orderList () {},
     },
     methods: {
         /* 初始化 */
@@ -146,32 +109,35 @@ export default {
         },
         /* 获取订单列表 */
         getOrderList (pageNum) {
+           // 订单的状态（1待付款；2已付款；3已发货；如果status=0 则是全部订单）
             let _para = {
-                pageNum: pageNum,
-                pageSize: 10,
-                type: 0
-            }
-            this.orderList =  mockData ;
+                openid: 'oLHCTjpIGYEjkzj7ckIWLXifV1Yk',
+                status: 0,
+                index: 100,
+                page: 1
+            };
+            this.orderList =  mockData.data ;
+            this.num = mockData.data.orderList.length;
             this.loadMore = true;
             // TODO
         },
         clickTitle (item) {
-            this.type = item.type;
+            this.status = item.status;
         },
         lower (e) {
             console.log('上拉加载')
-            wx.showLoading({
-                    title: '加载中',
-                    duration: 2000
-                })
             if(!this.loadMore) {
                 wx.showLoading({
                     title: '加载中',
                     duration: 2000
                 })
             }
-            
-
+        },
+        showModal () {
+            this.isShowPayModal = true;
+        },
+        payModalCancel () {
+            this.isShowPayModal = false
         }
     },
     created () {
@@ -250,7 +216,7 @@ export default {
                     transform: scale(.8);
                     top: 10px;
                     right: 12px;
-                    max-width: 50px;
+                    min-width: 50px;
                     height: 50px;
                     line-height: 50px;
                     padding: 5px;

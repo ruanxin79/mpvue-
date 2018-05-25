@@ -3,7 +3,7 @@
         <div class="main">
             <scroll-view scroll-y class="inner"
             @scrolltolower="lower" 
-            lower-threshold="50"  v-if="orderList.data">
+            lower-threshold="50"  v-if="orderList">
                 <!-- ----------------------orderdetail--------------------------------- -->
                 <div class="order-detail">
                     <div class="orderdetail-title">
@@ -13,57 +13,56 @@
                         </div>
                         <div class="acInfo">{{info}}</div>
                     </div>
-                    <div class="order-logistics" v-if="orderList.logistics">
+                    <div class="order-logistics" v-if="orderDetail">
                         <div class="logistics-status">
-                            <span>最新状态:</span>{{orderList.logistics}}
+                            <span>最新状态:</span>{{status}}
                         </div>
                         <div class="userInfo">
-                            <span>{{orderList.name}}:</span> {{orderList.phone}}
+                            <span>{{orderDetail.customer}}:</span> {{orderDetail.phone}}
                         </div>
                     </div>
                     <div class="order-list">
-                        <div v-for="(item, index) in orderList.data" :key="index">
+                        <div v-for="(item, index) in orderList" :key="index">
                             <div class="goods-title" 
                                 @click="handlerClick( item )">
                                 <div class="goods-img">
-                                    <img :src="item.img" alt="" mode="scaleToFill">
+                                    <img :src="item.product_thumb" alt="" mode="scaleToFill">
                                 </div>
                                 <div class="goods-text">
-                                    <p class="goods-ellipsis">{{item.info}}</p>
-                                    <p class="goods-price left" v-if="productStyle !='myOrder'"><span>￥{{item.product_price}}</span></p>
+                                    <p class="goods-ellipsis">{{item.product_full_name}}</p>
+                                    <p class="goods-price left" v-if="productStyle !='myOrder'"><span>￥{{item.original_total}}</span></p>
                                 </div>
                             </div>
                             <div class="goods-tags">
-                                <span v-for="(j,ind) in item.promiseInfo" :key="ind">{{j.title_icon}}</span>
+                                <span v-for="(j,ind) in promiseInfo" :key="ind">{{j.title_icon}}</span>
                                 <i class="icon icon-help-circled-alt"></i>
                             </div>
                             <ul class="goods-service">
-                                <li v-for="(k,i) in item.service_goods" :key="i">
+                                <li v-for="(k,i) in service_goods" :key="i">
                                     <span class="left">{{k.title}}</span>
                                     <span class="right"><s v-if="k.gift == 1" class="line-through">￥{{k.priMoney}}</s><s>￥{{k.price}}</s></span>
                                 </li>
                             </ul>
-                            <div class="goods-explain">
+                            <!-- <div class="goods-explain">
                                 说明: {{item.explain}}
-                            </div>
-                            <!-- <div class="goods-line"></div> -->
+                            </div> -->
                         </div>
                     </div>
                     <div class="order-price">
-                        <p class="zxg_discount" v-if="orderList.zxg_discount">尊享卡优惠<span>￥{{orderList.zxg_discount}}</span></p>
-                        <p class="service_price" v-if="orderList.service_price">客服调价<span>￥{{orderList.service_price}}</span></p>
-                        <p class="total_price" v-if="orderList.total_price">合计（免运费）<span>￥{{orderList.total_price}}</span></p>
+                        <p class="zxg_discount" >尊享卡优惠<span v-if="orderDetail.zxg_discount">￥{{orderDetail.zxg_discount}}</span></p>
+                        <p class="service_price" >客服调价<span v-if="orderDetail.service_price">￥{{orderDetail.service_price}}</span></p>
+                        <p class="total_price">合计（免运费）<span>￥{{orderDetail.original_total}}</span></p>
                     </div>
-                    <div class="goods-line"><i></i></div>
+                    <!-- <div class="goods-line"><i></i></div> -->
                     <div class="payment">
-                        <p>需支付<span>￥{{orderList.total_price}}</span></p>
+                        <p>需支付<span>￥{{orderDetail.total}}</span></p>
                     </div>
                 </div>
                 <div class="order-msg">
-                    <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderList.order_num}}</span></p>
-                    <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderList.order_time}}</span></p>
-                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.order_receipts}}</span></p>
-                    <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderList.order_mark}}</span></p>
+                    <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderDetail.code}}</span></p>
+                    <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderDetail.created_at}}</span></p>
+                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderDetail.invoice_personal}}</span></p>
+                    <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderDetail.product_full_name}}</span></p>
                 </div> 
             </scroll-view> 
             <div class="noOrder" v-else>{{noOrderText}}</div>
@@ -79,16 +78,82 @@ import store from '../../store'
 import {setPageTitle,getUserInfo} from '../../utils/wx'
 
 import {getTreeNode} from '../../utils/api' 
-const mockData = 
-        {  
-        data:[{
-                info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                productId:'2iruoei8723894',
-                product_price: '399.00',
-                explain: '已选私人订制，图片ID:12000 名称:摩羯座',
-                promiseInfo: [
+/* 订单列表 */
+const orderList = {
+    "status_code": 200,
+    "data": {
+        "orderList": [
+            {
+                "code": "2017042517321097485057",
+                "original_total": "198",
+                "total": "198.00",
+                "status": 0,
+                "product_id": 40,
+                "product_thumb": "/a/b/c/d",
+                "product_type": "computer",
+                "product_full_name": "lenovo笔记本"
+            },
+            {
+                "code": "2017042517314448979850",
+                "original_total": "198",
+                "total": "198.00",
+                "status": 0,
+                "product_id": 40,
+                "product_thumb": "/a/b/c/d",
+                "product_type": "computer",
+                "product_full_name": "lenovo笔记本"
+            }
+        ],
+        "payOrder": 0,
+        "deliverOrder": 0,
+        "collectOrder": 0,
+        "successOrder": 1
+    },
+    "message": "Success"
+}
+const orderDetail ={
+    "status_code": 200,
+    "data": {
+        "code": "2017041815473897494910",
+        "status": 0,
+        "total": "198.00",
+        "original_total": "198",
+        "customer": "测试1",
+        "phone": "13910842108",
+        "address": "北京市吴洋",
+        "created_at": "2017-04-18 15:47:37",
+        "invoice_personal": "个人-商品明细",
+        "invoice_company": "",
+        "product_full_name": "4.17笔记本",
+        "product_thumb": "/a/b/c/d",
+    },
+    "message": "Success"
+}
+const SERVICEGOODS=[{
+                        price: 0, 
+                        priMoney: 199,
+                        title: '意外保险1年',
+                        gift: 0,
+                    },
                     {
+                        price: 0, 
+                        priMoney: 399,
+                        title: '意外保险3年',
+                        gift: 0,
+                    },
+                    {
+                        price: 0, 
+                        priMoney: 199,
+                        title: '上面服务1年',
+                        gift: 1,
+                    },
+                    {
+                        price: 0, 
+                        priMoney: 199,
+                        title: '整机清洁1年',
+                        gift: 1,
+                    }]
+const PROMISEINFO = [ {
                     "title":        "支持七天无理由退换货",
                     "title_icon":   "7天",
                     "desc":         "客户购买商品7日内（含7日，自客户收到商品次日起计算），在保证商品完好、赠品及附件齐全的前提下，可无理由退货。"
@@ -117,246 +182,20 @@ const mockData =
                     "title":        "全场商品包邮",
                     "title_icon":   "包邮",
                     "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
-                    }
-                ],
-                service_goods:[
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '意外保险1年',
-                        gift: 0,
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 399,
-                        title: '意外保险3年',
-                        gift: 0
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '上面服务1年',
-                        gift: 1
-                    }
-                ]
-            },
-            {
-                info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                productId:'2iruo212ei8723894',
-                product_price: '199.00',
-                explain: '已选私人订制，图片ID:12000 名称:摩羯座',
-                promiseInfo: {
-                    "七天": {
-                    "title":        "支持七天无理由退换货",
-                    "title_icon":   "7天",
-                    "desc":         "客户购买商品7日内（含7日，自客户收到商品次日起计算），在保证商品完好、赠品及附件齐全的前提下，可无理由退货。"
-                    },
-                    "优选": {
-                    "title":        "商品均由商城精挑细选",
-                    "title_icon":   "优选",
-                    "desc":         "商城所有上架商品均经过精心挑选，我们会选择质量优、用户满意度高的商品。"
-                    },
-                    "管家": {
-                    "title":        "购机用户提供一对一管家服务",
-                    "title_icon":   "管家",
-                    "desc":         "服务管家在机器的购买、使用、维修、更换时提供全流程协助支持。"
-                    },
-                    "上门lenovo": {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    "上门think": {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    "包邮": {
-                    "title":        "全场商品包邮",
-                    "title_icon":   "包邮",
-                    "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
-                    }
-                },
-                service_goods:[
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '意外保险1年',
-                        gift: 0,
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 399,
-                        title: '意外保险3年',
-                        gift: 0,
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '上面服务1年',
-                        gift: 1,
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '整机清洁1年',
-                        gift: 1,
-                    }
-                ]
-            },
-            {
-                info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                productId:'2iruo212ei8723894',
-                product_price: '199.00',
-                explain: '已选私人订制，图片ID:12000 名称:摩羯座',
-                promiseInfo: {
-                    "七天": {
-                    "title":        "支持七天无理由退换货",
-                    "title_icon":   "7天",
-                    "desc":         "客户购买商品7日内（含7日，自客户收到商品次日起计算），在保证商品完好、赠品及附件齐全的前提下，可无理由退货。"
-                    },
-                    "优选": {
-                    "title":        "商品均由商城精挑细选",
-                    "title_icon":   "优选",
-                    "desc":         "商城所有上架商品均经过精心挑选，我们会选择质量优、用户满意度高的商品。"
-                    },
-                    "管家": {
-                    "title":        "购机用户提供一对一管家服务",
-                    "title_icon":   "管家",
-                    "desc":         "服务管家在机器的购买、使用、维修、更换时提供全流程协助支持。"
-                    },
-                    "上门lenovo": {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    "上门think": {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    "包邮": {
-                    "title":        "全场商品包邮",
-                    "title_icon":   "包邮",
-                    "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
-                    }
-                },
-                service_goods:[
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '意外保险1年',
-                        gift: 1
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 399,
-                        title: '意外保险3年',
-                        gift: 0
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '上面服务1年',
-                        gift: 1
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '整机清洁1年',
-                        gift: 0
-                    }
-                ]
-            },
-            {
-                info: 'ThinkPad X1 Carbon 14寸超级笔记本（i7-6500U 8GB SSD FHD IPS Win10',
-                img: 'https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051',
-                productId:'2iruo212ei8723894',
-                product_price: '199.00',
-                explain: '已选私人订制，图片ID:12000 名称:摩羯座',
-                promiseInfo: {
-                    "七天": {
-                    "title":        "支持七天无理由退换货",
-                    "title_icon":   "7天",
-                    "desc":         "客户购买商品7日内（含7日，自客户收到商品次日起计算），在保证商品完好、赠品及附件齐全的前提下，可无理由退货。"
-                    },
-                    "优选": {
-                    "title":        "商品均由商城精挑细选",
-                    "title_icon":   "优选",
-                    "desc":         "商城所有上架商品均经过精心挑选，我们会选择质量优、用户满意度高的商品。"
-                    },
-                    "管家": {
-                    "title":        "购机用户提供一对一管家服务",
-                    "title_icon":   "管家",
-                    "desc":         "服务管家在机器的购买、使用、维修、更换时提供全流程协助支持。"
-                    },
-                    "上门lenovo": {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    "上门think": {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    "包邮": {
-                    "title":        "全场商品包邮",
-                    "title_icon":   "包邮",
-                    "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
-                    }
-                },
-                service_goods:[
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '意外保险1年',
-                        gift: 1
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 399,
-                        title: '意外保险3年',
-                        gift: 1
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '上面服务1年',
-                        gift: 0
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '整机清洁1年',
-                        gift: 1
-                    }
-                ]
-            }],
-        total: 5,
-        order_price: '18800.00',
-        zxg_discount: 200,
-        service_price: 100,
-        total_price: '15800.00',
-        order_num: '225768027642107',
-        order_time: '2017-04-25 01:07:28',
-        order_receipts: '个人 - 商品明细',
-        order_mark: '联想（北京）有限公司',
-        logistics: '北京市顺义区分拣中心已发货',
-        name: '小马哥',
-        phone: '186****5679',
-        status: 1
-    }
+                    }]
+
 export default {
     data () {
         return {
             info: '好商品不等人，请尽快完成付款',
             noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             orderList: {},
+            orderDetail: {},
             status: '',
             loadMore: false,
+            promiseInfo: PROMISEINFO,
+            service_goods: SERVICEGOODS,
+            code: '',
         }
     },
     components: {
@@ -364,7 +203,13 @@ export default {
     },
     watch: {
         orderList () {
-            this.status = this.setStatus(this.orderList.status)
+            this.orderList.map((k) => {
+                k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
+            })
+        },
+        orderDetail () {
+            this.status = this.setStatus(this.orderDetail.status);
+            console.log(this.orderDetail)
         }
     },
     methods: {
@@ -376,41 +221,65 @@ export default {
             setTimeout(() => {
                 wx.hideLoading()
                 this.getOrderList(1);
+                this.getOrderDetail(1);
             }, 1000);
+        },
+        /* 商品详情 */
+        handlerClick (item) {
+            wx.navigateTo({
+                url: `/pages/productDetail/main?productId=${item.productId}&code=${item.code}`
+            })
         },
         /* 订单列表 */
         getOrderList (pageNum) {
             let _para = {
                 pageNum: pageNum,
                 pageSize: 10,
-                type: this.setStatus(mockData.status),
+                type: this.setStatus(orderList.data.orderList[0].status),
                 orderId: this.$mp.query.orderId || ''
             }
-            console.log(_para)
-            this.orderList = mockData;
+            console.log(orderList.data.orderList)
+            this.orderList = orderList.data.orderList;
+            this.loadMore = true;
+        },
+        getOrderDetail (pageNum) {
+            let _para = {
+                pageNum: pageNum,
+                pageSize: 10,
+                type: this.setStatus(orderList.data.orderList[0].status),
+                orderId: this.$mp.query.orderId || ''
+            }
+            this.orderDetail = orderDetail.data;
+            this.code = this.orderDetail.code;
         },
         setStatus (status) {
             let x = '';
-            let n = status;
-            switch (n) {
+            switch (status) {
+                case 0:
+                    x = '交易关闭'
+                    break;
                 case 1:
                     x = '待付款'
                     break;
                 case 2:
-                    x = '待发货'
+                    x = '已付款'
                     break;
                 case 3:
-                    x = '待收货'
-                    break;   
+                    x = '已发货'
+                    break;
+                case 4:
+                    x = '交易成功'
+                    break;
+                case 5:
+                    x = '退款'
+                    break;
+                case 6:
+                    x = '异常'
+                    break;
             }
             return x;   
         },
         lower (e) {
-
-            wx.showLoading({
-                    title: '加载中',
-                    duration: 2000
-                })
             if(!this.loadMore) {
                 wx.showLoading({
                     title: '加载中',
@@ -553,10 +422,12 @@ export default {
             color: $yellow;
             span {
                 font-size: 24px;
-                padding: 10px 12px;
+                color: $yellow;
+                border: 2px solid $yellow;
+                border-radius: 8px;
+                padding: 4px;
                 margin-right: 10px;
-                border: 1px solid $yellow;
-                border-radius: 10px;
+                margin-bottom: 10px;
             }
             i {
                 color: #828282;
