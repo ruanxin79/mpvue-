@@ -80,11 +80,11 @@ export default {
                 'paySign': '2222222',
                 'success':function(res){
                     wx.hideLoading();
-                    _this.clearTimer();
+                    _this.paySuccess();
                 },
                 'fail':function(res){
                     wx.hideLoading();
-                    _this.paySuccess();
+                    _this.clearTimer();
                 }
             })
         }

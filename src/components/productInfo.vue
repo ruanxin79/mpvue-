@@ -5,27 +5,25 @@
         <span>{{stateItem[item.status]}}</span>
       </div>
       <div class="product-title" 
-        @click="handlerClick( item )">
+        @click="handlerClick( item )"
+        v-for="( k , i) in item.computer" :key="i">
         <div class="product-img">
-          <img :src="item.product_thumb" alt="" mode="scaleToFill">
+          <img :src="k.product_thumb" alt="" mode="scaleToFill">
         </div>
         <div class="product-text">
-          <p class="product-ellipsis">{{item.product_full_name}}</p>
-          <!-- <p class="product-price right" v-if=" v == item.length-1 && productStyle =='myOrder'">共 <span>{{item.data.length}}</span> 件商品 实付款 : <span>￥{{item.order_price}}</span></p> -->
-          <!-- <p class="product-price left" v-if="productStyle !='myOrder'"><span>￥{{item.total}}</span></p> -->
+          <p class="product-ellipsis">{{k.product_full_name}}</p>
+          <p class="product-price right" v-if=" i == (item.computer.length-1)">共 <span>{{item.computer.length}}</span> 件商品 实付款 : <span>￥{{item.original_total}}</span></p>
         </div>
       </div>
-      <div class="product-btn" v-if="productStyle =='myOrder' ">
-        <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
-        && item.status == 1
+      <div class="product-btn" v-if="item.status == 1">
+        <button :type="item.status == 1 ? 'warn' : 'default' "
           :size="defaultSize" 
           :loading="loading" 
           :plain="plain"
           :disabled="disabled" 
           hover-class="other-button-hover"
-          v-if="item.status == 1"
           @click="payBtn"
-          >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button> -->
+          >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
         <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
           :size="defaultSize" 
           :loading="loading" 
@@ -57,34 +55,35 @@ export default {
   watch: {
     data () {
       this.List = this.data.orderList;
-      console.log(this.List)
       this.List.map((k) => {
-        k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
+        k.computer.map((i)=> {
+          i.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
+        })
       })
     },
     type() {
-      this.List = this.filterArray(this.data);
+      this.List = this.filterOrderList(this.data.orderList);
     }
   },
   methods: {
     init () {
       this.List = this.data
     },
-    filterArray(array) {
+    filterOrderList(array) {
       let _newArr = []
         for(const i of array) {
-          if(this.type === 0) {
-            _newArr = this.data;
-          }else if(i.status == this.type){
+          if(this.type == 0 ) {
+            _newArr = this.data.orderList;
+          }else if(i.status == this.type) {
             _newArr.push(i)
-          }  
-        }
+          }
+        }   
         return _newArr;
     },
     /* 追踪订单 、 立即支付  */
     handlerClick (item) { 
       wx.navigateTo({
-        url: `/pages/orderdetail/main?orderId=${item.order_num}`
+        url: `/pages/orderdetail/main?product_id=${item.id}&code=${item.code}`
       })
     },
     payBtn () {
@@ -127,7 +126,7 @@ export default {
  
   .product-status {
     text-align: right;
-    padding: 35px;
+    padding: 35px 0;
     span {
       font-size: 26px; 
     }
@@ -162,6 +161,7 @@ export default {
         text-overflow: ellipsis;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        min-height: 64px;
       }
       .product-price {
         color: #666666;

@@ -13,16 +13,16 @@
                         </div>
                         <div class="acInfo">{{info}}</div>
                     </div>
-                    <div class="order-logistics" v-if="orderDetail">
+                    <!-- <div class="order-logistics" v-if="orderDetail">
                         <div class="logistics-status">
                             <span>最新状态:</span>{{status}}
                         </div>
                         <div class="userInfo">
                             <span>{{orderDetail.customer}}:</span> {{orderDetail.phone}}
                         </div>
-                    </div>
+                    </div> -->
                     <div class="order-list">
-                        <div v-for="(item, index) in orderList" :key="index">
+                        <div v-for="(item, index) in orderList.product" :key="index">
                             <div class="goods-title" 
                                 @click="handlerClick( item )">
                                 <div class="goods-img">
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="goods-text">
                                     <p class="goods-ellipsis">{{item.product_full_name}}</p>
-                                    <p class="goods-price left" v-if="productStyle !='myOrder'"><span>￥{{item.original_total}}</span></p>
+                                    <p class="goods-price left" v-if="productStyle !='myOrder'"><span>￥{{item.product_price}}</span></p>
                                 </div>
                             </div>
                             <div class="goods-tags">
@@ -38,9 +38,21 @@
                                 <i class="icon icon-help-circled-alt"></i>
                             </div>
                             <ul class="goods-service">
-                                <li v-for="(k,i) in service_goods" :key="i">
-                                    <span class="left">{{k.title}}</span>
-                                    <span class="right"><s v-if="k.gift == 1" class="line-through">￥{{k.priMoney}}</s><s>￥{{k.price}}</s></span>
+                                <li v-for="(k,i) in item.gift" :key="i" v-if="item.gift">
+                                    <span class="left">{{k.product_full_name}}</span>
+                                    <span class="right"><s class="line-through">￥{{k.product_price}}</s><s>￥{{k.product_price}}</s></span>
+                                </li>
+                                <li v-for="(k,i) in item.service" :key="i" v-if="item.service">
+                                    <span class="left">{{k.product_full_name}}</span>
+                                    <span class="right"><s class="line-through">￥{{k.product_price}}</s><s>￥{{k.product_price}}</s></span>
+                                </li>
+                                <li v-for="(k,i) in item.part" :key="i" v-if="item.part">
+                                    <span class="left">{{k.product_full_name}}</span>
+                                    <span class="right"><s class="line-through">￥{{k.product_price}}</s><s>￥{{k.product_price}}</s></span>
+                                </li>
+                                <li v-for="(k,i) in item.recommend" :key="i" v-if="item.recommend">
+                                    <span class="left">{{k.product_full_name}}</span>
+                                    <span class="right"><s class="line-through">￥{{k.product_price}}</s><s>￥{{k.product_price}}</s></span>
                                 </li>
                             </ul>
                             <!-- <div class="goods-explain">
@@ -49,20 +61,20 @@
                         </div>
                     </div>
                     <div class="order-price">
-                        <p class="zxg_discount" >尊享卡优惠<span v-if="orderDetail.zxg_discount">￥{{orderDetail.zxg_discount}}</span></p>
-                        <p class="service_price" >客服调价<span v-if="orderDetail.service_price">￥{{orderDetail.service_price}}</span></p>
-                        <p class="total_price">合计（免运费）<span>￥{{orderDetail.original_total}}</span></p>
+                        <p class="zxg_discount" >尊享卡优惠<span v-if="orderList.zxg_discount">￥{{orderList.zxg_discount}}</span></p>
+                        <p class="service_price" >客服调价<span v-if="orderList.service_price">￥{{orderList.service_price}}</span></p>
+                        <p class="total_price">合计（免运费）<span>￥{{orderList.original_total}}</span></p>
                     </div>
-                    <!-- <div class="goods-line"><i></i></div> -->
+                    <div class="goods-line"><i></i></div>
                     <div class="payment">
-                        <p>需支付<span>￥{{orderDetail.total}}</span></p>
+                        <p>需支付<span>￥{{orderList.total}}</span></p>
                     </div>
                 </div>
                 <div class="order-msg">
-                    <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderDetail.code}}</span></p>
-                    <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderDetail.created_at}}</span></p>
-                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderDetail.invoice_personal}}</span></p>
-                    <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderDetail.product_full_name}}</span></p>
+                    <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderList.code}}</span></p>
+                    <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderList.created_at}}</span></p>
+                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.invoice_personal}}</span></p>
+                    <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderList.address}}</span></p>
                 </div> 
             </scroll-view> 
             <div class="noOrder" v-else>{{noOrderText}}</div>
@@ -79,56 +91,6 @@ import {setPageTitle,getUserInfo} from '../../utils/wx'
 
 import {getTreeNode} from '../../utils/api' 
 /* 订单列表 */
-const orderList = {
-    "status_code": 200,
-    "data": {
-        "orderList": [
-            {
-                "code": "2017042517321097485057",
-                "original_total": "198",
-                "total": "198.00",
-                "status": 0,
-                "product_id": 40,
-                "product_thumb": "/a/b/c/d",
-                "product_type": "computer",
-                "product_full_name": "lenovo笔记本"
-            },
-            {
-                "code": "2017042517314448979850",
-                "original_total": "198",
-                "total": "198.00",
-                "status": 0,
-                "product_id": 40,
-                "product_thumb": "/a/b/c/d",
-                "product_type": "computer",
-                "product_full_name": "lenovo笔记本"
-            }
-        ],
-        "payOrder": 0,
-        "deliverOrder": 0,
-        "collectOrder": 0,
-        "successOrder": 1
-    },
-    "message": "Success"
-}
-const orderDetail ={
-    "status_code": 200,
-    "data": {
-        "code": "2017041815473897494910",
-        "status": 0,
-        "total": "198.00",
-        "original_total": "198",
-        "customer": "测试1",
-        "phone": "13910842108",
-        "address": "北京市吴洋",
-        "created_at": "2017-04-18 15:47:37",
-        "invoice_personal": "个人-商品明细",
-        "invoice_company": "",
-        "product_full_name": "4.17笔记本",
-        "product_thumb": "/a/b/c/d",
-    },
-    "message": "Success"
-}
 const SERVICEGOODS=[{
                         price: 0, 
                         priMoney: 199,
@@ -183,6 +145,131 @@ const PROMISEINFO = [ {
                     "title_icon":   "包邮",
                     "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
                     }]
+const orderDetail = {
+    "status_code": 200,
+    "message": "success",
+    "data": {
+        "id": 2211,
+        "code": "2018052518273050495350",
+        "status": 1,
+        "total": "12470.99",
+        "original_total": "12470.99",
+        "customer": "张金宇",
+        "phone": "17710164002",
+        "address": "平仄平仄平平仄仄",
+        "created_at": "2018-05-25 18:27:30",
+        "invoice_personal": "个人-商品明细",
+        "invoice_company": "",
+        "product": [
+            {
+                "id": 2691,
+                "order_id": 2211,
+                "product_id": 17,
+                "product_type": "computer",
+                "product_full_name": "asdg",
+                "product_abbreviation": "asdg",
+                "product_price": "2343.00",
+                "supplier_name": "北京龙企华商科技有限公司",
+                "product_thumb": "/img/zxg/584524ca135ee.jpg",
+                "product_pid": 0,
+                "recommend": [
+                    {
+                        "id": 2695,
+                        "order_id": 2211,
+                        "product_id": 2,
+                        "product_type": "recommend",
+                        "product_full_name": "ThinkPad X260 (20F6A05FCD)12.5英寸超薄笔记本电脑(I5-6200U 8G 256GSSD Win7 )",
+                        "product_abbreviation": "[配件]12.5英寸超薄笔记本",
+                        "product_price": "20.11",
+                        "supplier_name": "北京龙企华商科技有限公司",
+                        "product_thumb": "/img/zxg/5843dfc1cc74b.jpg",
+                        "product_pid": 2691
+                    },
+                    {
+                        "id": 2705,
+                        "order_id": 2211,
+                        "product_id": 2,
+                        "product_type": "recommend",
+                        "product_full_name": "ThinkPad X260 (20F6A05FCD)12.5英寸超薄笔记本电脑(I5-6200U 8G 256GSSD Win7 )",
+                        "product_abbreviation": "[配件]12.5英寸超薄笔记本",
+                        "product_price": "20.11",
+                        "supplier_name": "北京龙企华商科技有限公司",
+                        "product_thumb": "/img/zxg/5843dfc1cc74b.jpg",
+                        "product_pid": 2691
+                    }
+                ],
+                "gift": [
+                    {
+                        "id": 2692,
+                        "order_id": 2211,
+                        "product_id": 4,
+                        "product_type": "gift",
+                        "product_full_name": "赠品1",
+                        "product_abbreviation": "赠品",
+                        "product_price": "20.00",
+                        "supplier_name": "北京龙企华商科技有限公司",
+                        "product_thumb": "/img/zxg/5843e03417d48.jpg",
+                        "product_pid": 2691
+                    }
+                ],
+                "part": [
+                    {
+                        "id": 2694,
+                        "order_id": 2211,
+                        "product_id": 30,
+                        "product_type": "part",
+                        "product_full_name": "测试热门1年",
+                        "product_abbreviation": "测试热门机型顺序3-new",
+                        "product_price": "99.00",
+                        "supplier_name": "北京龙企华商科技有限公司",
+                        "product_thumb": "/img/zxg/5847c3fc42c8e.jpg",
+                        "product_pid": 2691
+                    }
+                ],
+                "service": [
+                    {
+                        "id": 2693,
+                        "order_id": 2211,
+                        "product_id": 31,
+                        "product_type": "service",
+                        "product_full_name": "服务描述",
+                        "product_abbreviation": "服务",
+                        "product_price": "88.88",
+                        "supplier_name": "北京龙企华商科技有限公司",
+                        "product_thumb": "/img/zxg/5847efbd33d7f.jpg",
+                        "product_pid": 2691
+                    }
+                ]
+            },
+            {
+                "id": 2696,
+                "order_id": 2211,
+                "product_id": 17,
+                "product_type": "computer",
+                "product_full_name": "asdg",
+                "product_abbreviation": "asdg",
+                "product_price": "2343.00",
+                "supplier_name": "北京龙企华商科技有限公司",
+                "product_thumb": "/img/zxg/584524ca135ee.jpg",
+                "product_pid": 0,
+                "gift": [
+                    {
+                        "id": 2697,
+                        "order_id": 2211,
+                        "product_id": 4,
+                        "product_type": "gift",
+                        "product_full_name": "赠品1",
+                        "product_abbreviation": "赠品",
+                        "product_price": "20.00",
+                        "supplier_name": "北京龙企华商科技有限公司",
+                        "product_thumb": "/img/zxg/5843e03417d48.jpg",
+                        "product_pid": 2696
+                    }
+                ]
+            }
+        ]
+    }
+}                 
 
 export default {
     data () {
@@ -196,6 +283,7 @@ export default {
             promiseInfo: PROMISEINFO,
             service_goods: SERVICEGOODS,
             code: '',
+            id: ''
         }
     },
     components: {
@@ -203,25 +291,24 @@ export default {
     },
     watch: {
         orderList () {
-            this.orderList.map((k) => {
-                k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
+            this.orderList.product.map((k) => {
+               k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
             })
-        },
-        orderDetail () {
-            this.status = this.setStatus(this.orderDetail.status);
-            console.log(this.orderDetail)
+            this.status = this.setStatus(this.orderList.status);
         }
     },
     methods: {
         init () {
+            // 地址栏传参
+            this.id = this.$mp.query.product_id
+            this.code = this.$mp.query.code
             setPageTitle('订单详情');
             wx.showLoading({
                 title: '加载中',
             })
             setTimeout(() => {
                 wx.hideLoading()
-                this.getOrderList(1);
-                this.getOrderDetail(1);
+                this.getOrderList(1)
             }, 1000);
         },
         /* 商品详情 */
@@ -235,22 +322,12 @@ export default {
             let _para = {
                 pageNum: pageNum,
                 pageSize: 10,
-                type: this.setStatus(orderList.data.orderList[0].status),
+                type: this.setStatus(orderDetail.data.status),
                 orderId: this.$mp.query.orderId || ''
             }
-            console.log(orderList.data.orderList)
-            this.orderList = orderList.data.orderList;
+            console.log(orderDetail);
+            this.orderList = orderDetail.data;
             this.loadMore = true;
-        },
-        getOrderDetail (pageNum) {
-            let _para = {
-                pageNum: pageNum,
-                pageSize: 10,
-                type: this.setStatus(orderList.data.orderList[0].status),
-                orderId: this.$mp.query.orderId || ''
-            }
-            this.orderDetail = orderDetail.data;
-            this.code = this.orderDetail.code;
         },
         setStatus (status) {
             let x = '';
@@ -402,6 +479,7 @@ export default {
                     text-overflow: ellipsis;
                     -webkit-line-clamp: 2;
                     -webkit-box-orient: vertical;
+                    min-height: 65px;
                 }
                 .goods-price {
                     color: #666666;
@@ -451,15 +529,22 @@ export default {
                 justify-content: space-between;
                 border: 1px solid #828282;
                 border-radius: 10px;
-                padding: 10px 0;
+                height: 45px;
+                line-height: 45px;
+                padding: 0 10px;
                 margin: 10px 0;
                 :nth-child(odd) {
-                    margin-right: 10px;
+                    margin-right: 5px;
+                }
+                .left {
+                    max-width: 216px;
+                    height: 45px;
+                    overflow: hidden;
                 }
                 span {
                     display: flex;
-                    margin: 0 20px;
                     s.line-through{
+                        font-size: 18px;
                         text-decoration: line-through;   
                     }
                 }
@@ -474,9 +559,9 @@ export default {
             padding: 0 $padding-x;
             color: $color;
             font-size: 24px;
-
             p{
                clear: both; 
+               margin-top: 18px;
             }
             span {
                 float: right;
@@ -486,12 +571,16 @@ export default {
         .payment {
             padding-top: 30px;
             padding-bottom: 30px;
+            font-size: 26px;
+            color: #171717;
+            p {margin-top: 0 }
             span {
                 color: $red;
             }
         }
         .total_price {
-            color: #333333;
+            font-size: 24px;
+            color: #171717;
         }
 
         .order-msg {
