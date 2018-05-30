@@ -45,6 +45,8 @@ export default {
                 --this.timer;
                 if(this.timer < 1) {
                     this.$emit('hideModal')
+                    this.payError = false;
+                    this.paySu = false;
                     clearInterval(tiems);
                 }
             },1000) 
@@ -91,6 +93,7 @@ export default {
     },
     watch: {
         isShowModal (nValue) {
+            console.log(this.isShowModal)
             this.timer = 5;
             if(this.isShowModal) {
                 this.orderPay();

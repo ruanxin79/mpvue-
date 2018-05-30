@@ -900,7 +900,7 @@ const mockData = {
                 ]
             }
         ],
-        "payOrder":0,
+        "payOrder":1,
         "deliverOrder":4,
         "collectOrder":2,
         "successOrder":3
