@@ -1,7 +1,7 @@
 <template>
     <section class="banner-cont">
         <swiper indicator-dots>
-            <swiper-item v-for="item in data" :key="item.key">
+            <swiper-item v-for="item in data" :key="item.id">
                 <img :src="item.image" class="slide-image" />
             </swiper-item>
         </swiper>

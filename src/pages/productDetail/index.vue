@@ -2,21 +2,15 @@
     <div class="container">
         <div class="main">
             <scroll-view class="inner" scroll-y="true">
-                <Slide :data="productImages" />    
+                <Slide :data="productDetail.head_images ? productDetail.head_images : []" />    
                 <section class="product-intro">
-                    <h2 class="title">联想（Lenovo）Yoga 900（YogaA4 pro）13.3英寸触控笔记本 i5 6200u 4G 256G SSD win10</h2>
-                    <p class="feature">
-                        唯快不破 i5 6200U 16G 1TB 固态硬盘 【32年联想匠心不变】精品出鞘 时尚之选 表链式转轴更抓人眼球
-                    </p>
-                    <p class="price">￥9000</p>
+                    <h2 class="title">{{productDetail.full_name}}</h2>
+                    <p class="feature">{{productDetail.briefly}}</p>
+                    <p class="price">￥{{productDetail.price}}</p>
                     <ul class="label">
                         <li class="label-item">7天</li>
                         <li class="label-item">优选</li>
-                        <li class="label-item">管家</li>
-                        <li class="label-item">上门</li>
                         <li class="label-item">包邮</li>
-                        <li class="label-item">就是好</li>        
-                        <li class="label-item">不买不行</li>
                     </ul>
                 </section>
                 <section class="sale-menu">
@@ -24,17 +18,20 @@
                     <p class="sale-word">赠</p>
                     <p class="selected-reminder">一年意外保护等4个</p>
                 </section>
-                <section class="sale-menu" @click="showPartModal">
+<!--                 <section class="sale-menu" @click="showPartModal">
                     <p class="cont">服务选件</p>
                     <p class="is-select">已选</p>
                     <p class="selected-reminder">一年意外保护等4个</p>
-                </section>
+                </section> -->
             </scroll-view>
-           
         </div>
         <div class="bottom-menu">
-            <div class="icon-container">
-                底部导航
+            <div class="btn-container">
+                <div class="btn-item" @click="toHome">
+                    <i class="icon-home sicon-normal"></i>
+                    <span class="words-normal">首页</span>                    
+                </div>
+                <div class="btn-item buy" @click="toSetOrder">立即购买</div>
             </div>
         </div> 
         <PartModal 
@@ -50,6 +47,8 @@
 import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
+
+import {getProductDetail} from '../../utils/api'
 
 import Slide from '../../components/Slide'
 
@@ -76,13 +75,17 @@ export default {
         PartModal
     },
     computed: {
-
+        productDetail () {
+            return store.state.productDetail
+        },
     },
     methods: {
         init () {
             let {productId, productName} = this.$root.$mp.query;
             if (productId) {
                 //获取产品详情信息
+                // productId = 'COMPUTER-654826';
+                store.dispatch('requsetProductDetail', {productId})
 
                 productName ? setPageTitle(productName) : '';
             }
@@ -92,9 +95,15 @@ export default {
 
             this.isShowPartModal = false;
         },
-        showPartModal () {
+        // showPartModal () {
 
-            this.isShowPartModal = true;
+        //     this.isShowPartModal = true;
+        // },
+        toSetOrder () {
+            wx.navigateTo({url: `/pages/order/main`})
+        },
+        toHome () {
+            wx.navigateTo({url: `/pages/index/main`})
         }
     },
     onLoad () {
@@ -218,13 +227,6 @@ export default {
 
 
 
-
-
-
-
-
-
-
     .container {
         position: fixed;
         height: 100%;
@@ -244,6 +246,44 @@ export default {
             height: 106px;
             z-index: 10px;
             background-color: #f9f9f9;
+
+            .btn-container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                .btn-item {
+                    width: 50%;
+                    height: 100%;
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .btn-item.buy {
+                    font-size: 40px;
+                    text-align: center;
+                    line-height: 106px;
+                    color: #fff;
+                    background-color: $yellow;
+                }
+                .sicon-normal {
+                    font-size: 30px;
+                    color: #999; 
+                    margin-top: 6px;
+                }
+                .sicon-active {
+                    margin-top: 6px;
+                    font-size: 30px;
+                    color: $yellow;
+                }
+                .words-normal {
+                    font-size: 26px;
+                    color: #999;
+                }
+                .words-active {
+                    font-size: 26px;
+                    color: $yellow;
+                }
+            }
         }
 
         .inner {
