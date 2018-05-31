@@ -76,12 +76,11 @@ export default {
             let _para = {
                 code : item.code
             }
-
             getPayOrder(_para).then( (res) => {
                 if(res.status_code === 200) {
-                    this.Payment = res.data
+                    this.Payment = res.data;
                     this.orderPay();
-                }
+                }     
             })
         },
         /* 订单支付 */
@@ -107,7 +106,7 @@ export default {
     },
     watch: {
         isShowModal (nValue) {
-            this.timer = 5; 
+            this.timer = 5;
         }
     },
     mounted () {

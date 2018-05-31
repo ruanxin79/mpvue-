@@ -79,7 +79,23 @@
             </scroll-view> 
             <div class="noOrder" v-else>{{noOrderText}}</div>
              <!----------------------orderdetail--------------------------------- -->
-        </div>   
+        
+        </div> 
+        <PayModal 
+            ref="children"
+            :isShowModal="isShowPayModal"
+            @hideModal="payModalCancel"
+            @getOrderList='getOrderList(1)'>
+        </PayModal>  
+        <div class="bottom-menu" v-if="orderList.status == 1">
+            <div class="btn-container">
+                <div class="btn-item" @click="toHome">
+                    <i class="icon-home sicon-normal"></i>
+                    <span class="words-normal">首页</span>                    
+                </div>
+                <div class="btn-item buy" @click="toPayOrder">立即购买</div>
+            </div>
+        </div> 
     </div>
 </template>
 
@@ -90,6 +106,7 @@ import store from '../../store'
 import {setPageTitle} from '../../utils/wx'
 
 import {getOrderDetail} from '../../utils/api'           
+import  PayModal from "../../components/PayModal"
 
 const PROMISEINFO = [ {
                     "title":        "支持七天无理由退换货",
@@ -132,13 +149,14 @@ export default {
             status: '',
             loadMore: false,
             isShow: false,
+            isShowPayModal: false,
             promiseInfo: PROMISEINFO,
             code: '',
             id: ''
         }
     },
     components: {
-    
+       PayModal
     },
     watch: {
         orderList () {
@@ -148,14 +166,19 @@ export default {
             this.status = this.setStatus(this.orderList.status);
         }
     },
+    computed: {
+        openId () {
+            return store.state.openId
+        }
+    },
     methods: {
         init () {
             // 地址栏传参
-            this.id = this.$mp.query.product_id || ''
-            this.code = this.$mp.query.code || ''
+            // let id = this.$mp.query.product_id || ''
+            // let code = this.$mp.query.code || ''
+            let {code} = this.$mp.query;
             setPageTitle('订单详情')
-            this.getOrderList(1)
-            this.userInfo = store.state.userInfo
+            this.getOrderDetailList(code)
         },
         /* 商品详情 */
         handlerClick (item) {
@@ -164,10 +187,10 @@ export default {
             })
         },
         /* 订单列表 */
-        getOrderList (pageNum) {
+        getOrderDetailList (code) {
             let _para = {
-                orderCode: this.code,
-                openid: this.userInfo.openid || 'oLHCTjpIGYEjkzj7ckIWLXifV1YkoLHCTjpIGYEjkzj7ckIWLXifV1Yk'
+                orderCode: code,
+                openid: this.openId
             }
             wx.showLoading({
                 title: '加载中',
@@ -218,6 +241,20 @@ export default {
                     duration: 2000
                 })
             }
+        },
+        payModalCancel () {
+            this.isShowPayModal = false
+        },
+        toPayOrder () {
+            this.isShowPayModal = true;
+            let item = {
+                code: this.$mp.query.code
+            }
+            /* 获取支付签名 */
+            this.$refs.children.getPayInfo(item); 
+        },
+        toHome () {
+            wx.navigateTo({url: `/pages/index/main`})
         }
     },
     created () {
@@ -241,6 +278,52 @@ export default {
             position: absolute;
             top: 0;
             bottom: 107px;        
+        }
+        .bottom-menu {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 106px;
+            z-index: 10px;
+            background-color: #f9f9f9;
+
+            .btn-container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                .btn-item {
+                    width: 50%;
+                    height: 100%;
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .btn-item.buy {
+                    font-size: 40px;
+                    text-align: center;
+                    line-height: 106px;
+                    color: #fff;
+                    background-color: $yellow;
+                }
+                .sicon-normal {
+                    font-size: 30px;
+                    color: #999; 
+                    margin-top: 6px;
+                }
+                .sicon-active {
+                    margin-top: 6px;
+                    font-size: 30px;
+                    color: $yellow;
+                }
+                .words-normal {
+                    font-size: 26px;
+                    color: #999;
+                }
+                .words-active {
+                    font-size: 26px;
+                    color: $yellow;
+                }
+            }
         }
         .inner {
             width: 100%;

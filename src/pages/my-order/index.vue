@@ -929,6 +929,11 @@ export default {
     watch: {
         orderList () {},
     },
+    computed: {
+        openId () {
+            return store.state.openId
+        }
+    },
     methods: {
         /* 初始化 */
         init () {
@@ -940,7 +945,7 @@ export default {
         getOrderList (pageNum) {
            // 订单的状态（1待付款；2已付款；3已发货；如果status=0 则是全部订单）
             let _para = {
-                openid: this.userInfo.openid || 'oLHCTjpIGYEjkzj7ckIWLXifV1Yk',
+                openid: this.openId ,
                 status: 0,
                 index: 100,
                 page: 1
@@ -953,7 +958,7 @@ export default {
                 if(res.status_code === 200) {
                     this.orderList = res.data
                     this.num = res.data.orderList.length
-                    this.orderList.orderList[0].status = 1;
+                    //this.orderList.orderList[0].status = 1;
                 }  
             }).catch((e)=>{
                 console.log(e)

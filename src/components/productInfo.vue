@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import store from '../store'
 export default {
   name: 'productInfo',
   props: ['data','productStyle','type'],
@@ -78,7 +79,7 @@ export default {
     /* 追踪订单 、 立即支付  */
     handlerClick (item) { 
       wx.navigateTo({
-        url: `/pages/orderdetail/main?product_id=${item.id}&code=${item.code}`
+        url: `/pages/orderdetail/main?code=${item.code}`
       })
     },
     payBtn (item) {
