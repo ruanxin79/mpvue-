@@ -119,7 +119,7 @@ import Label from '../../components/Label'
 
 import TicketModal from '../../components/TicketModal'
 
-const MD5 = require('md5')
+//const MD5 = require('md5')
 export default {
     data () {
         return {

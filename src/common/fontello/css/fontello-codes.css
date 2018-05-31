@@ -1,4 +1,11 @@
 
-.icon-home:before { content: '\e800'; } /* '' */
-.icon-user-outline:before { content: '\e801'; } /* '' */
-.icon-user:before { content: '\e802'; } /* '' */
+.icon-right-open:before { content: '\e800'; } /* '' */
+.icon-user:before { content: '\e801'; } /* '' */
+.icon-user-outline:before { content: '\e802'; } /* '' */
+.icon-home:before { content: '\e803'; } /* '' */
+.icon-wallet:before { content: '\e804'; } /* '' */
+.icon-gift:before { content: '\e805'; } /* '' */
+.icon-clock:before { content: '\e806'; } /* '' */
+.icon-truck:before { content: '\e807'; } /* '' */
+.icon-help-circled-alt:before { content: '\e808'; } /* '' */
+.icon-doc-text:before { content: '\f0f6'; } /* '' */
