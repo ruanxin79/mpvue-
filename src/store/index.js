@@ -7,7 +7,11 @@ Vue.use(Vuex)
 
 const state = {
 	userInfo: {},
-	loginCode: ""
+	loginCode: "",
+	openId: '',
+	productDetail: {},
+	banners: [],
+	activates: []
 };
 
 export default new Vuex.Store({

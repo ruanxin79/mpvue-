@@ -1,6 +1,7 @@
 import * as types from './mutation-types'
 import * as wx from '../utils/wx'
 import * as api from '../utils/api'
+import store from './index'
 
 export const initPage = ({commit}, {}) => {
     wx.getUserInfo().then(userInfo => {
