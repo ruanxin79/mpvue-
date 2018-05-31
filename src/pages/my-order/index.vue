@@ -26,9 +26,10 @@
             </scroll-view>
         </div> 
         <PayModal 
+            ref="children"
             :isShowModal="isShowPayModal"
             @hideModal="payModalCancel"
-            @getOrderList='init'>
+            @getOrderList='getOrderList(1)'>
         </PayModal>
     </div>
 </template>
@@ -37,8 +38,8 @@
 
 import store from '../../store'
 
-import {setPageTitle,GetOrderList} from '../../utils/wx'
-
+import { setPageTitle } from '../../utils/wx'
+import { getOrderList } from "../../utils/api"
 import ProductInfo from "../../components/productInfo"
 import PayModal from '../../components/PayModal'
 const mockData = {
@@ -917,7 +918,8 @@ export default {
             productStyle: 'myOrder',
             status: 0,
             orderList: [],
-            isShowPayModal: false
+            isShowPayModal: false,
+            userInfo: {}
         }
     },
     components: {
@@ -930,35 +932,39 @@ export default {
     methods: {
         /* 初始化 */
         init () {
-            setPageTitle('我的订单');
-            wx.showLoading({
-                title: '加载中',
-            })
-            setTimeout(() => {
-                wx.hideLoading()
-                this.getOrderList(1);
-            }, 1000);
-            
+            setPageTitle('我的订单');  
+            this.getOrderList(1);  
+            this.userInfo = store.state.userInfo       
         },
         /* 获取订单列表 */
         getOrderList (pageNum) {
            // 订单的状态（1待付款；2已付款；3已发货；如果status=0 则是全部订单）
             let _para = {
-                openid: 'oLHCTjpIGYEjkzj7ckIWLXifV1Yk',
+                openid: this.userInfo.openid || 'oLHCTjpIGYEjkzj7ckIWLXifV1Yk',
                 status: 0,
                 index: 100,
                 page: 1
             };
-            this.orderList =  mockData.data ;
-            this.num = mockData.data.orderList.length;
+            wx.showLoading({
+                title: '加载中'
+            })
+            getOrderList(_para).then((res)=>{
+                wx.hideLoading()
+                if(res.status_code === 200) {
+                    this.orderList = res.data
+                    this.num = res.data.orderList.length
+                    this.orderList.orderList[0].status = 1;
+                }  
+            }).catch((e)=>{
+                console.log(e)
+                wx.hideLoading()
+            })
             this.loadMore = true;
-            // TODO
         },
         changeTitle (state) {
            this.status = state;
         },
         lower (e) {
-            console.log('上拉加载')
             if(!this.loadMore) {
                 wx.showLoading({
                     title: '加载中',
@@ -966,8 +972,10 @@ export default {
                 })
             }
         },
-        showModal () {
+        showModal (item) {
             this.isShowPayModal = true;
+            /* 获取支付签名 */
+            this.$refs.children.getPayInfo(item);
         },
         payModalCancel () {
             this.isShowPayModal = false

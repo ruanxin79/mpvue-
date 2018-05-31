@@ -19,11 +19,4 @@ export function getUserInfo () {
 		})
 	})	
 }
-export function GetOrderList() {
-	return new Promise((resolve, reject) => {
-	  wx.getOrderList({
-	    success: (res) => resolve(res.userInfo),
-	    fail: (err) => reject(err)
-	  })
-	})
-}
+

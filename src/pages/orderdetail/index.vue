@@ -3,7 +3,7 @@
         <div class="main">
             <scroll-view scroll-y class="inner"
             @scrolltolower="lower" 
-            lower-threshold="50"  v-if="orderList">
+            lower-threshold="50" v-if="isShow">
                 <!-- ----------------------orderdetail--------------------------------- -->
                 <div class="order-detail">
                     <div class="orderdetail-title">
@@ -87,34 +87,10 @@
 
 import store from '../../store'
 
-import {setPageTitle,getUserInfo} from '../../utils/wx'
+import {setPageTitle} from '../../utils/wx'
 
-import {getTreeNode} from '../../utils/api' 
-/* 订单列表 */
-const SERVICEGOODS=[{
-                        price: 0, 
-                        priMoney: 199,
-                        title: '意外保险1年',
-                        gift: 0,
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 399,
-                        title: '意外保险3年',
-                        gift: 0,
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '上面服务1年',
-                        gift: 1,
-                    },
-                    {
-                        price: 0, 
-                        priMoney: 199,
-                        title: '整机清洁1年',
-                        gift: 1,
-                    }]
+import {getOrderDetail} from '../../utils/api'           
+
 const PROMISEINFO = [ {
                     "title":        "支持七天无理由退换货",
                     "title_icon":   "7天",
@@ -145,132 +121,6 @@ const PROMISEINFO = [ {
                     "title_icon":   "包邮",
                     "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
                     }]
-const orderDetail = {
-    "status_code": 200,
-    "message": "success",
-    "data": {
-        "id": 2211,
-        "code": "2018052518273050495350",
-        "status": 1,
-        "total": "12470.99",
-        "original_total": "12470.99",
-        "customer": "张金宇",
-        "phone": "17710164002",
-        "address": "平仄平仄平平仄仄",
-        "created_at": "2018-05-25 18:27:30",
-        "invoice_personal": "个人-商品明细",
-        "invoice_company": "",
-        "product": [
-            {
-                "id": 2691,
-                "order_id": 2211,
-                "product_id": 17,
-                "product_type": "computer",
-                "product_full_name": "asdg",
-                "product_abbreviation": "asdg",
-                "product_price": "2343.00",
-                "supplier_name": "北京龙企华商科技有限公司",
-                "product_thumb": "/img/zxg/584524ca135ee.jpg",
-                "product_pid": 0,
-                "recommend": [
-                    {
-                        "id": 2695,
-                        "order_id": 2211,
-                        "product_id": 2,
-                        "product_type": "recommend",
-                        "product_full_name": "ThinkPad X260 (20F6A05FCD)12.5英寸超薄笔记本电脑(I5-6200U 8G 256GSSD Win7 )",
-                        "product_abbreviation": "[配件]12.5英寸超薄笔记本",
-                        "product_price": "20.11",
-                        "supplier_name": "北京龙企华商科技有限公司",
-                        "product_thumb": "/img/zxg/5843dfc1cc74b.jpg",
-                        "product_pid": 2691
-                    },
-                    {
-                        "id": 2705,
-                        "order_id": 2211,
-                        "product_id": 2,
-                        "product_type": "recommend",
-                        "product_full_name": "ThinkPad X260 (20F6A05FCD)12.5英寸超薄笔记本电脑(I5-6200U 8G 256GSSD Win7 )",
-                        "product_abbreviation": "[配件]12.5英寸超薄笔记本",
-                        "product_price": "20.11",
-                        "supplier_name": "北京龙企华商科技有限公司",
-                        "product_thumb": "/img/zxg/5843dfc1cc74b.jpg",
-                        "product_pid": 2691
-                    }
-                ],
-                "gift": [
-                    {
-                        "id": 2692,
-                        "order_id": 2211,
-                        "product_id": 4,
-                        "product_type": "gift",
-                        "product_full_name": "赠品1",
-                        "product_abbreviation": "赠品",
-                        "product_price": "20.00",
-                        "supplier_name": "北京龙企华商科技有限公司",
-                        "product_thumb": "/img/zxg/5843e03417d48.jpg",
-                        "product_pid": 2691
-                    }
-                ],
-                "part": [
-                    {
-                        "id": 2694,
-                        "order_id": 2211,
-                        "product_id": 30,
-                        "product_type": "part",
-                        "product_full_name": "测试热门1年",
-                        "product_abbreviation": "测试热门机型顺序3-new",
-                        "product_price": "99.00",
-                        "supplier_name": "北京龙企华商科技有限公司",
-                        "product_thumb": "/img/zxg/5847c3fc42c8e.jpg",
-                        "product_pid": 2691
-                    }
-                ],
-                "service": [
-                    {
-                        "id": 2693,
-                        "order_id": 2211,
-                        "product_id": 31,
-                        "product_type": "service",
-                        "product_full_name": "服务描述",
-                        "product_abbreviation": "服务",
-                        "product_price": "88.88",
-                        "supplier_name": "北京龙企华商科技有限公司",
-                        "product_thumb": "/img/zxg/5847efbd33d7f.jpg",
-                        "product_pid": 2691
-                    }
-                ]
-            },
-            {
-                "id": 2696,
-                "order_id": 2211,
-                "product_id": 17,
-                "product_type": "computer",
-                "product_full_name": "asdg",
-                "product_abbreviation": "asdg",
-                "product_price": "2343.00",
-                "supplier_name": "北京龙企华商科技有限公司",
-                "product_thumb": "/img/zxg/584524ca135ee.jpg",
-                "product_pid": 0,
-                "gift": [
-                    {
-                        "id": 2697,
-                        "order_id": 2211,
-                        "product_id": 4,
-                        "product_type": "gift",
-                        "product_full_name": "赠品1",
-                        "product_abbreviation": "赠品",
-                        "product_price": "20.00",
-                        "supplier_name": "北京龙企华商科技有限公司",
-                        "product_thumb": "/img/zxg/5843e03417d48.jpg",
-                        "product_pid": 2696
-                    }
-                ]
-            }
-        ]
-    }
-}                 
-
 export default {
     data () {
         return {
@@ -278,10 +128,11 @@ export default {
             noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             orderList: {},
             orderDetail: {},
+            userInfo: {},
             status: '',
             loadMore: false,
+            isShow: false,
             promiseInfo: PROMISEINFO,
-            service_goods: SERVICEGOODS,
             code: '',
             id: ''
         }
@@ -291,25 +142,20 @@ export default {
     },
     watch: {
         orderList () {
-            this.orderList.product.map((k) => {
-               k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
-            })
+            // this.orderList.product.map((k) => {
+            //    k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
+            // })
             this.status = this.setStatus(this.orderList.status);
         }
     },
     methods: {
         init () {
             // 地址栏传参
-            this.id = this.$mp.query.product_id
-            this.code = this.$mp.query.code
-            setPageTitle('订单详情');
-            wx.showLoading({
-                title: '加载中',
-            })
-            setTimeout(() => {
-                wx.hideLoading()
-                this.getOrderList(1)
-            }, 1000);
+            this.id = this.$mp.query.product_id || ''
+            this.code = this.$mp.query.code || ''
+            setPageTitle('订单详情')
+            this.getOrderList(1)
+            this.userInfo = store.state.userInfo
         },
         /* 商品详情 */
         handlerClick (item) {
@@ -320,13 +166,22 @@ export default {
         /* 订单列表 */
         getOrderList (pageNum) {
             let _para = {
-                pageNum: pageNum,
-                pageSize: 10,
-                type: this.setStatus(orderDetail.data.status),
-                orderId: this.$mp.query.orderId || ''
+                orderCode: this.code,
+                openid: this.userInfo.openid || 'oLHCTjpIGYEjkzj7ckIWLXifV1YkoLHCTjpIGYEjkzj7ckIWLXifV1Yk'
             }
-            console.log(orderDetail);
-            this.orderList = orderDetail.data;
+            wx.showLoading({
+                title: '加载中',
+            })
+            getOrderDetail(_para).then( (res) => {
+                wx.hideLoading()
+                if(res.status_code ===200) {
+                    this.isShow = res.data.product.length!=0 ? true : false
+                    this.orderList = res.data
+                }
+            }).catch((e) => {
+                wx.hideLoading()
+                console.log(e)
+            })
             this.loadMore = true;
         },
         setStatus (status) {

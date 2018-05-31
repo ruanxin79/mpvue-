@@ -7,7 +7,7 @@
                 <div class="pay-info">如已付款，请‘联系客服’获取帮助。</div>
                 <div class="pay-time">{{timer}}{{payInfo}}</div>
             </section>
-            <section class="base-info success" v-if="paySu">
+            <section class="base-info success" v-if="paySuccess">
                 <div class="pay-title"><i class="icon icon-help-circled-alt"></i>{{title}}</div>
                 <div class="pay-info">您可查看订单详情，</div>
                 <div class="pay-info">或者继续浏览商城其他商品</div>
@@ -22,7 +22,7 @@
 
 <script>
 import Pmodal from '../../base/Modal'
-
+import { getPayOrder } from "../../utils/api"
 export default {
     data () {
         return {
@@ -30,8 +30,9 @@ export default {
             payRes: false,
             timer: 5,
             payError: false,
-            paySu: false,
-            payInfo: '秒后自动跳转至‘我的订单’页'
+            paySuccess: false,
+            payInfo: '秒后自动跳转至‘我的订单’页',
+            Payment: {}
         }
     },
     props: ['isShowModal', 'onCancel'],
@@ -46,20 +47,20 @@ export default {
                 if(this.timer < 1) {
                     this.$emit('hideModal')
                     this.payError = false;
-                    this.paySu = false;
+                    this.paySuccess = false;
                     clearInterval(tiems);
                 }
             },1000) 
         },
         /* 支付成功 */
         paySuccess () {
-            this.paySu = true;
+            this.paySuccess = true;
             this.title = '支付成功'
         },
         /* 支付成功操作 */
         routerPage (page) {
             this.payError = false;
-            this.paySu = false;
+            this.paySuccess = false;
             this.$emit('hideModal');
             if(page === 'index') {
                 wx.navigateTo({
@@ -70,16 +71,29 @@ export default {
             }
             
         },
+        /* 支付签名 */
+        getPayInfo (item) {
+            let _para = {
+                code : item.code
+            }
+
+            getPayOrder(_para).then( (res) => {
+                if(res.status_code === 200) {
+                    this.Payment = res.data
+                    this.orderPay();
+                }
+            })
+        },
         /* 订单支付 */
         orderPay () {
            let _this = this;
             wx.showLoading()
             wx.requestPayment({
-                'timeStamp': '1527213640779',
-                'nonceStr': '222',
-                'package': '1111111',
-                'signType': 'MD5',
-                'paySign': '2222222',
+                'timeStamp': String(this.Payment.timeStamp),
+                'nonceStr': this.Payment.nonceStr,
+                'package': this.Payment.package,
+                'signType': this.Payment.signType,
+                'paySign': this.Payment.paySign,
                 'success':function(res){
                     wx.hideLoading();
                     _this.paySuccess();
@@ -93,11 +107,7 @@ export default {
     },
     watch: {
         isShowModal (nValue) {
-            console.log(this.isShowModal)
-            this.timer = 5;
-            if(this.isShowModal) {
-                this.orderPay();
-            }   
+            this.timer = 5; 
         }
     },
     mounted () {

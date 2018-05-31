@@ -22,7 +22,7 @@
           :plain="plain"
           :disabled="disabled" 
           hover-class="other-button-hover"
-          @click="payBtn"
+          @click="payBtn(item)"
           >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
         <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
           :size="defaultSize" 
@@ -55,11 +55,6 @@ export default {
   watch: {
     data () {
       this.List = this.data.orderList;
-      this.List.map((k) => {
-        k.computer.map((i)=> {
-          i.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
-        })
-      })
     },
     type() {
       this.List = this.filterOrderList(this.data.orderList);
@@ -86,8 +81,8 @@ export default {
         url: `/pages/orderdetail/main?product_id=${item.id}&code=${item.code}`
       })
     },
-    payBtn () {
-      this.$emit('showModal');
+    payBtn (item) {
+      this.$emit('showModal',item);
     }
   },
   created () {
@@ -138,12 +133,13 @@ export default {
     border-bottom: 1px solid $under-background; 
     .product-img {
       width: 195px;
-      height: 125px; 
+      height: 125px;
       img {
+        background-color: $under-background; 
         width: 100%;
         height: 125px;
         font-size: 24px;
-        transform: scale(.85)
+        transform: scale(.9)
       }
     }
     .product-text {
