@@ -7,7 +7,7 @@
                 <div class="pay-info">如已付款，请‘联系客服’获取帮助。</div>
                 <div class="pay-time">{{timer}}{{payInfo}}</div>
             </section>
-            <section class="base-info success" v-if="paySuccess">
+            <section class="base-info success" v-if="payOk">
                 <div class="pay-title"><i class="icon icon-help-circled-alt"></i>{{title}}</div>
                 <div class="pay-info">您可查看订单详情，</div>
                 <div class="pay-info">或者继续浏览商城其他商品</div>
@@ -30,7 +30,7 @@ export default {
             payRes: false,
             timer: 5,
             payError: false,
-            paySuccess: false,
+            payOk: false,
             payInfo: '秒后自动跳转至‘我的订单’页',
             Payment: {}
         }
@@ -47,20 +47,20 @@ export default {
                 if(this.timer < 1) {
                     this.$emit('hideModal')
                     this.payError = false;
-                    this.paySuccess = false;
+                    this.payOk = false;
                     clearInterval(tiems);
                 }
             },1000) 
         },
         /* 支付成功 */
         paySuccess () {
-            this.paySuccess = true;
+            this.payOk = true;
             this.title = '支付成功'
         },
         /* 支付成功操作 */
         routerPage (page) {
             this.payError = false;
-            this.paySuccess = false;
+            this.payOk = false;
             this.$emit('hideModal');
             if(page === 'index') {
                 wx.navigateTo({
