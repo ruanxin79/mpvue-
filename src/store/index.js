@@ -11,7 +11,8 @@ const state = {
 	openId: '',
 	productDetail: {},
 	banners: [],
-	activates: []
+	activates: [],
+	orderDetail: {}
 };
 
 export default new Vuex.Store({

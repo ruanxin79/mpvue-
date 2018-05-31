@@ -27,7 +27,7 @@
                     <i class="icon-home sicon-active"></i>
                     <span class="words-active">首页</span>
                 </div>
-                <div class="btn-item">
+                <div class="btn-item" @click="redirectToMyOrder">
                     <i class="icon-user sicon-normal"></i>
                     <span class="words-normal">我的订单</span>
                 </div>
@@ -92,6 +92,9 @@ export default {
         },
         redirectToDetail (id, productName) {
             wx.navigateTo({url: `/pages/productDetail/main?productId=${id}&productName=${productName}`})
+        },
+        redirectToMyOrder () {
+            wx.navigateTo({url: `/pages/my-order/main`})
         }
     },
     created () {
