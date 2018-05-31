@@ -72,15 +72,6 @@ export default {
     },
     methods: {
         init () {
-            setPageTitle('智享生活')
-        },
-        clickHandle(text, event){
-          console.log(text, e)
-        },
-        add(){
-          store.commit('INIT_PAGE', {count: ++this.count})
-
-          request('http://aaa.com.cn','get',{a: 1, b: 2})
             setPageTitle('想帮帮');
             store.dispatch('initPage', {})
             getHotProductList({page: 1,index: 20}).then((res)=> {
