@@ -261,7 +261,6 @@ export default {
             let _para = {
                 code : item.code
             }
-            this.showModal("err")
             getPayOrder(_para).then( (res) => {
                 if(res.status_code === 200) {
                 this.Payment = res.data;

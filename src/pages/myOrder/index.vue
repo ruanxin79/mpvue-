@@ -7,7 +7,7 @@
                 <div class="title">
                     <h5>
                         我的订单
-                        <span>共 {{num}} 单</span>
+                        <span>共 {{num || 0}} 单</span>
                     </h5>
                     <ul class="title-item">
                         <li @click="changeTitle(0)"><span class="icon icon-doc-text"></span><span>全部</span></li>
@@ -31,6 +31,18 @@
             @hideModal="payModalCancel"
             @getOrderList='getMyOrderList(1)'>
         </PayModal>
+        <div class="bottom-menu">
+            <div class="btn-container">
+                <div class="btn-item" @click="toHome">
+                    <i class="icon-home"></i>
+                    <span class="words-active">首页</span>
+                </div>
+                <div class="btn-item">
+                    <i class="icon-user sicon-normal"></i>
+                    <span class="words-normal">我的订单</span>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -93,12 +105,13 @@ export default {
                 if(res.status_code === 200) {
                     this.orderList = res.data
                     this.num = res.data.orderList.length
+                    this.loadMore = true
                 }  
             }).catch((e)=>{
                 console.log(e)
                 wx.hideLoading()
             })
-            this.loadMore = true;
+            
         },
         changeTitle (state) {
            this.status = state;
@@ -117,6 +130,9 @@ export default {
         },
         payModalCancel () {
             this.isShowPayModal = false
+        },
+        toHome () {
+            wx.navigateTo({url: `/pages/index/main`})
         }
     },
     created () {
@@ -149,6 +165,55 @@ export default {
             height: 100%;
         }
 
+        .bottom-menu {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 106px;
+            z-index: 10px;
+            background-color: #f9f9f9;
+
+            .btn-container {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                .btn-item {
+                    width: 50%;
+                    height: 100%;
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .btn-item.buy {
+                    font-size: 40px;
+                    text-align: center;
+                    line-height: 106px;
+                    color: #fff;
+                    background-color: $yellow;
+                }
+                .sicon-normal {
+                    font-size: 30px;
+                    color: $yellow; 
+                    margin-top: 6px;
+                }
+                .sicon-active {
+                    margin-top: 6px;
+                    font-size: 30px;
+                    color: $yellow;
+                }
+                .icon-home {
+                    color: #999;
+                }
+                .words-normal {
+                    font-size: 26px;
+                    color: $yellow;
+                }
+                .words-active {
+                    font-size: 26px;
+                    color: #999;
+                }
+            }
+        }
         .title {
             background-color: #ffffff;
             font-size: $font-size;

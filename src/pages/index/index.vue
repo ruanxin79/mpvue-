@@ -94,7 +94,7 @@ export default {
             wx.navigateTo({url: `/pages/productDetail/main?productId=${id}&productName=${productName}`})
         },
         redirectToMyOrder () {
-            wx.navigateTo({url: `/pages/my-order/main`})
+            wx.navigateTo({url: `/pages/myOrder/main`})
         }
     },
     created () {
