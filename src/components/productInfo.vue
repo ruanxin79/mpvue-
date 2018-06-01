@@ -38,6 +38,7 @@
 
 <script>
 import store from '../store'
+import { getPayOrder } from "../utils/api"
 export default {
   name: 'productInfo',
   props: ['data','productStyle','type'],
@@ -48,6 +49,7 @@ export default {
       defaultSize: 'default',
       primarySize: 'default',
       warnSize: 'default',
+      Payment: {},
       disabled: false,
       plain: false,
       loading: false
@@ -83,7 +85,40 @@ export default {
       })
     },
     payBtn (item) {
-      this.$emit('showModal',item);
+      this.getPayInfo(item)
+      store.state.disabled = false
+    },
+    /* 支付签名 */
+    getPayInfo (item) {
+        let _para = {
+            code : item.code
+        }
+        getPayOrder(_para).then( (res) => {
+            if(res.status_code === 200) {
+              this.Payment = res.data;
+              this.orderPay();
+            }     
+        })
+    },
+    /* 订单支付 */
+    orderPay () {
+        let _this = this;
+        wx.showLoading()
+        wx.requestPayment({
+          'timeStamp': String(this.Payment.timeStamp),
+          'nonceStr': this.Payment.nonceStr,
+          'package': this.Payment.package,
+          'signType': this.Payment.signType,
+          'paySign': this.Payment.paySign,
+          'success':function(res){
+              wx.hideLoading();
+              _this.$emit('showModal','success');
+          },
+          'fail':function(res){
+              wx.hideLoading();
+              _this.$emit('showModal','err');
+          }
+        })
     }
   },
   created () {

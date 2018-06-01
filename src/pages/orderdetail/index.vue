@@ -84,6 +84,7 @@
         <PayModal 
             ref="children"
             :isShowModal="isShowPayModal"
+            :callbackInfo="callbackInfo"
             @hideModal="payModalCancel"
             @getOrderList='getOrderList(1)'>
         </PayModal>  
@@ -105,7 +106,8 @@ import store from '../../store'
 
 import {setPageTitle} from '../../utils/wx'
 
-import {getOrderDetail} from '../../utils/api'           
+import { getOrderDetail ,getPayOrder} from '../../utils/api' 
+      
 import  PayModal from "../../components/PayModal"
 
 const PROMISEINFO = [ {
@@ -147,6 +149,7 @@ export default {
             orderDetail: {},
             userInfo: {},
             status: '',
+            callbackInfo: '',
             loadMore: false,
             isShow: false,
             isShowPayModal: false,
@@ -174,8 +177,6 @@ export default {
     methods: {
         init () {
             // 地址栏传参
-            // let id = this.$mp.query.product_id || ''
-            // let code = this.$mp.query.code || ''
             let {code} = this.$mp.query;
             setPageTitle('订单详情')
             this.getOrderDetailList(code)
@@ -245,13 +246,48 @@ export default {
         payModalCancel () {
             this.isShowPayModal = false
         },
-        toPayOrder () {
+        showModal (callbackInfo) {
             this.isShowPayModal = true;
+            this.callbackInfo = callbackInfo;
+        },
+        toPayOrder () {
             let item = {
                 code: this.$mp.query.code
             }
-            /* 获取支付签名 */
-            this.$refs.children.getPayInfo(item); 
+           this.getPayInfo(item)
+        },
+        /* 支付签名 */
+        getPayInfo (item) {
+            let _para = {
+                code : item.code
+            }
+            this.showModal("err")
+            getPayOrder(_para).then( (res) => {
+                if(res.status_code === 200) {
+                this.Payment = res.data;
+                this.orderPay();
+                }     
+            })
+        },
+        /* 订单支付 */
+        orderPay () {
+            let _this = this;
+            wx.showLoading()
+            wx.requestPayment({
+            'timeStamp': String(this.Payment.timeStamp),
+            'nonceStr': this.Payment.nonceStr,
+            'package': this.Payment.package,
+            'signType': this.Payment.signType,
+            'paySign': this.Payment.paySign,
+            'success':function(res){
+                wx.hideLoading();
+                _this.showModal("success")
+            },
+            'fail':function(res){
+                wx.hideLoading();
+                _this.showModal("err")
+            }
+            })
         },
         toHome () {
             wx.navigateTo({url: `/pages/index/main`})

@@ -12,7 +12,8 @@ const state = {
 	productDetail: {},
 	banners: [],
 	activates: [],
-	orderDetail: {}
+	orderDetail: {},
+	disabled: true,
 };
 
 export default new Vuex.Store({
