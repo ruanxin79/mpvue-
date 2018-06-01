@@ -38,10 +38,10 @@
                     </div>
                 </section>
                 <section class="product-item">
-                    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526321979102&di=d27f54db64fc0ab102ee311c4690a443&imgtype=0&src=http%3A%2F%2F58pic.ooopic.com%2F58pic%2F15%2F69%2F38%2F35558PICqf8.jpg" class="product-img">
+                    <img :src="productDetail.thumb" class="product-img">
                     <div class="product-info">
                         <div class="title">
-                            <p class="sale-one">今天天气很哈破今天天气很哈破今天天气很哈破今天</p>
+                            <p class="sale-one">{{productDetail.full_name}}</p>
                         </div>
                         <p class="price">￥{{productDetail.price}}</p>
                     </div>

@@ -8,9 +8,9 @@ export default function request (url, type='GET', params={}, headers) {
                 'Content-Type': type.toLowerCase() === 'get' ? 'application/x-www-form-urlencoded' : 'application/json'
             },
             //生产环境
-            // baseURL: "http://alyweixin.lenovo.com.cn/weixin/index.php",
+            baseURL: "https://enjoy.lenovo.com.cn",
             //开发环境及测试环境
-            baseURL: "http://smart.lenovo.com.cn"
+            // baseURL: "http://smart.lenovo.com.cn"
         };
         //http://testscanadmin.lenovo.com.cn
         if (headers) {
