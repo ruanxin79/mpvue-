@@ -140,16 +140,16 @@ export default {
                 }
             }
             .cancel-icon {
-                font-size: 40px;
+                font-size: 60px;
                 color: 999;
                 display: inline-block;
-                width: 40px;
-                height: 40px;
-                line-height: 40px;
+                width: 60px;
+                height: 60px;
+                line-height: 60px;
                 text-align: center;
                 color: #999;
-                margin-left: 20px;
-                margin-top: 10px;
+                margin-left: 8px;
+                margin-top: 8px;
             }
         }
 

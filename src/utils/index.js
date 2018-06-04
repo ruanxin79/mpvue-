@@ -26,7 +26,7 @@ export class ParamsValidate {
     }
 
     checkUserName (username) {
-        let SpeChar = "@/'\"#$%&^*";
+        let SpeChar = "@/'\"#$%&^*》《。，";
 
         if (!this.result) {
             return this;

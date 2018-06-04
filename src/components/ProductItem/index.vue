@@ -3,8 +3,8 @@
     	<img :src="data.thumb" class="product-img">
     	<div class="product-info">
     		<div class="title">
+                <p class="product-name">{{data.product_name}}</p>
     			<p class="sale-one">{{data.sale_point_one}}</p>
-    			<p class="product-name">{{data.product_name}}</p>
     		</div>
     		<div class="other-sale-point">
     			<p v-for="item in data.other_sale_point" :key="item.key">{{item.name}}</p>
@@ -53,8 +53,35 @@ export default {
     			p {
     				width: 402px;
     				line-height: 42px;
-    				word-wrap: break-word;
     			}
+                .sale-one {
+
+                    font-size: 22px;
+
+                    line-height: 36px;
+
+                    color:#999;
+                    
+                    display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+
+                    -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+
+                    -webkit-line-clamp: 2; /** 显示的行数 **/
+
+                    overflow: hidden;  /** 隐藏超出的内容 **/
+                }
+
+                .product-name {
+
+
+                    display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+
+                    -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+
+                    -webkit-line-clamp: 2; /** 显示的行数 **/
+
+                    overflow: hidden;  /** 隐藏超出的内容 **/                    
+                }
     		}
     		.other-sale-point {
     			width: 402px;
@@ -68,6 +95,7 @@ export default {
     				color: #6f6f6f;
     				font-size: 20px;
     			}
+
     		}
     		.price {
     			color: $red;

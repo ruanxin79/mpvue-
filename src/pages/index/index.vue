@@ -6,7 +6,7 @@
                 <CutLine content="精品活动" />
                 <section class="activity">
                     <scroll-view class="activity-view" scroll-x="true">
-                        <a :href="item.link_url" class="activity-link" v-for="item in activates" :key="item.id">
+                        <a class="activity-link" v-for="item in activates" :key="item.id">
                             <img :src="item.url" class="activat-img">
                         </a>
                     </scroll-view>
@@ -27,7 +27,7 @@
                     <i class="icon-home sicon-active"></i>
                     <span class="words-active">首页</span>
                 </div>
-                <div class="btn-item">
+                <div class="btn-item" @click="redirectToMyOrder">
                     <i class="icon-user sicon-normal"></i>
                     <span class="words-normal">我的订单</span>
                 </div>
@@ -72,9 +72,9 @@ export default {
     },
     methods: {
         init () {
-            setPageTitle('想帮帮');
+            setPageTitle('智享生活');
             store.dispatch('initPage', {})
-            getHotProductList({page: 1,index: 20}).then((res)=> {
+            getHotProductList({page: 1,index: 2}).then((res)=> {
                 res.data.productList && res.data.productList.forEach((item) => {
                     var temp = [];
                     for (var k in item.sell_point) {
@@ -92,6 +92,9 @@ export default {
         },
         redirectToDetail (id, productName) {
             wx.navigateTo({url: `/pages/productDetail/main?productId=${id}&productName=${productName}`})
+        },
+        redirectToMyOrder () {
+            wx.navigateTo({url: `/pages/my-order/main`})
         }
     },
     created () {
@@ -161,19 +164,22 @@ export default {
 
         .activity-view {
             width: 100%;
+            height: 302px;
             white-space: nowrap; 
             display: flex;
+            flex-direction: row;
             .activity-link {
                 width: 288px;
                 height: 302px;
-                display: inline-block;
                 margin-left: 2px;
+                display: inline-block;
             }
         }
 
         .activat-img {
             width: 288px;
             height: 302px;
+            margin-left: 2px;
         }
         
     }

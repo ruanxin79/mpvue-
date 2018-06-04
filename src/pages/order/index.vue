@@ -38,10 +38,10 @@
                     </div>
                 </section>
                 <section class="product-item">
-                    <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526321979102&di=d27f54db64fc0ab102ee311c4690a443&imgtype=0&src=http%3A%2F%2F58pic.ooopic.com%2F58pic%2F15%2F69%2F38%2F35558PICqf8.jpg" class="product-img">
+                    <img :src="productDetail.thumb" class="product-img">
                     <div class="product-info">
                         <div class="title">
-                            <p class="sale-one">今天天气很哈破今天天气很哈破今天天气很哈破今天</p>
+                            <p class="sale-one">{{productDetail.full_name}}</p>
                         </div>
                         <p class="price">￥{{productDetail.price}}</p>
                     </div>
@@ -89,9 +89,8 @@
                 <section class="remark-words">
                 	<div class="zhu">注: </div>
                 	<ul class="list">
-                		<li>1、【7天无条件退货】和【14天无条件换货】从签收之日算起</li>
+                		<li>1、【7天无条件退货】和【14天无条件换货】时间从签收之日算起</li>
                 		<li>2、自卖家发货之日起，14天后交易自动完成</li>
-                		<li>3、默认开具个人发票，如需更改发票类型请在下单之后联系在线客服</li>
                 	</ul>
                 </section>                   
             </scroll-view>
@@ -119,7 +118,8 @@ import Label from '../../components/Label'
 
 import TicketModal from '../../components/TicketModal'
 
-const MD5 = require('md5')
+import PayModal from '../../components/PayModal'
+//const MD5 = require('md5')
 export default {
     data () {
         return {
@@ -134,7 +134,8 @@ export default {
     },
     components: {
         Label,
-        TicketModal
+        TicketModal,
+        PayModal
     },
     computed: {
         productDetail () {
@@ -146,9 +147,7 @@ export default {
     },
     methods: {
         init () {
-            setPageTitle('商品详情');
-
-
+            setPageTitle('填写订单');
         },
         bindRegionChange (e) {
             let value = e.target.value;

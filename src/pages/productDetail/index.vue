@@ -13,16 +13,21 @@
                         <li class="label-item">包邮</li>
                     </ul>
                 </section>
-                <section class="sale-menu">
+                <section class="sale-menu" v-if="productDetail.gifts && productDetail.gifts.length > 0" @click="showGiftModel">
                     <p class="cont">促销</p>
                     <p class="sale-word">赠</p>
-                    <p class="selected-reminder">一年意外保护等4个</p>
+                    <p class="selected-reminder">
+                        {{productDetail.gifts && productDetail.gifts.length > 0 ? productDetail.gifts[0].full_name+'等'+productDetail.gifts.length+'个' : ''}}
+                    </p>
                 </section>
 <!--                 <section class="sale-menu" @click="showPartModal">
                     <p class="cont">服务选件</p>
                     <p class="is-select">已选</p>
                     <p class="selected-reminder">一年意外保护等4个</p>
                 </section> -->
+                <section class="detail-img-cont">
+                    <img :src="item.image" v-for="item in productDetail.detail_images" :key="item.id" class="det-img">
+                </section>
             </scroll-view>
         </div>
         <div class="bottom-menu">
@@ -38,7 +43,7 @@
             :isShowModal="isShowPartModal"
             :onCancel="partModalCancel"
         ></PartModal>
-        
+        <GiftModal v-if="giftModelVisible" title="促销"></GiftModal>
     </div>
 </template>
 
@@ -54,6 +59,8 @@ import Slide from '../../components/Slide'
 
 import PartModal from '../../components/PartModal'
 
+import GiftModal from '../../components/GiftModal'
+
 export default {
     data () {
         return {
@@ -67,12 +74,14 @@ export default {
                     key: '456'
                 }
             ],
-            isShowPartModal: false
+            isShowPartModal: false,
+            giftModelVisible: false
         }
     },
     components: {
         Slide,
-        PartModal
+        PartModal,
+        GiftModal
     },
     computed: {
         productDetail () {
@@ -81,18 +90,16 @@ export default {
     },
     methods: {
         init () {
-            let {productId, productName} = this.$root.$mp.query;
+            let {productId} = this.$root.$mp.query;
             if (productId) {
                 //获取产品详情信息
                 // productId = 'COMPUTER-654826';
                 store.dispatch('requsetProductDetail', {productId})
 
-                productName ? setPageTitle(productName) : '';
+                setPageTitle('智享生活 - 商品详情')
             }
         },
         partModalCancel () {
-            console.log(213)
-
             this.isShowPartModal = false;
         },
         // showPartModal () {
@@ -104,6 +111,13 @@ export default {
         },
         toHome () {
             wx.navigateTo({url: `/pages/index/main`})
+        },
+        showGiftModel () {
+            setTimeout(() =>{
+                this.giftModelVisible = true
+            }, 500)
+            
+            // console.log(this.productDetail.gifts)
         }
     },
     onLoad () {
@@ -370,6 +384,12 @@ export default {
                 vertical-align: middle;
                 color: $yellow;
                 margin-left: 14px;                
+            }
+        }
+        .detail-img-cont {
+            .det-img {
+                width: 100%;
+                height: 360px;
             }
         }
     }    
