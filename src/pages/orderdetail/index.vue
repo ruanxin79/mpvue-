@@ -88,13 +88,17 @@
             @hideModal="payModalCancel"
             @getOrderList='getOrderList(1)'>
         </PayModal>  
-        <div class="bottom-menu" v-if="orderList.status == 1">
+        <div class="bottom-menu">
             <div class="btn-container">
                 <div class="btn-item" @click="toHome">
                     <i class="icon-home sicon-normal"></i>
                     <span class="words-normal">首页</span>                    
                 </div>
-                <div class="btn-item buy" @click="toPayOrder">立即购买</div>
+                <div class="btn-item buy" @click="toPayOrder"  v-if="orderList.status == 1">立即购买</div>
+                <!-- <div class="btn-item" v-if="orderList.status != 1">
+                    <i class="icon-user sicon-normal"></i>
+                    <span class="words-normal">我的订单</span>
+                </div> -->
             </div>
         </div> 
     </div>
@@ -331,6 +335,7 @@ export default {
                     width: 50%;
                     height: 100%;
                     flex-direction: column;
+                    flex: 1;
                     text-align: center;
                 }
                 .btn-item.buy {
