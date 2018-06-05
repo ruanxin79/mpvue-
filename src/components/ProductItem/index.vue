@@ -55,7 +55,6 @@ export default {
     				line-height: 42px;
     			}
                 .sale-one {
-
                     font-size: 22px;
 
                     line-height: 36px;

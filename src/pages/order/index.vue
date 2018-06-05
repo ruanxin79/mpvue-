@@ -101,6 +101,7 @@
             <div class="sub-btn" @click="submit">提交订单</div> 
         </div>
         <TicketModal :isShowModal="visible"></TicketModal>
+
     </div>
 </template>
 
@@ -118,7 +119,8 @@ import Label from '../../components/Label'
 
 import TicketModal from '../../components/TicketModal'
 
-import PayModal from '../../components/PayModal'
+
+
 //const MD5 = require('md5')
 export default {
     data () {
@@ -129,7 +131,10 @@ export default {
             consignee: '',
             telephone: '',
             detailAddress: "",
-            remark: ""
+            remark: "",
+            isShowPayModal: false,
+            callbackInfo: "",
+
         }
     },
     components: {
@@ -190,6 +195,7 @@ export default {
             }
 
 
+            wx.showLoading({title: "提交中"})
             createOrder(params).then((res) => {
                 if (res.status_code === 200) {
                     let data = res.data;
@@ -199,19 +205,33 @@ export default {
                        'package': data.package,
                        'signType': 'MD5',
                        'paySign': data.paySign,
-                       'success': function(res){
-                            console.log(res)
+                       success: (res) => {
+                            wx.hideLoading()
+
+                            
                        },
-                       'fail': function(res){
-                            console.log(res)
+                       fail: (res) => {
+                            wx.hideLoading()
+     
+                            
                        }
                     })
 
+                }
+                else {
+                    wx.hideLoading()
+                    wx.showModal({
+                        title: '错误',
+                        content: res.message
+                    })   
                 }
 
             }).catch((e) => {
                 console.log(e)
             })
+        },
+        payModalCancel () {
+            this.isShowPayModal = false
         }
     },
     mounted(){

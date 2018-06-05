@@ -1,11 +1,11 @@
 <template>
     <Pmodal :show="isShowModal">
         <div class="modal-container">
-            <section class="base-info error" v-if="payError">
+            <section class="base-info error" v-if="payErr">
                 <div class="pay-title"><i class="icon icon-help-circled-alt"></i>{{title}}</div>
                 <div class="pay-info">请前往‘我的订单’再次支付，</div>
                 <div class="pay-info">如已付款，请‘联系客服’获取帮助。</div>
-                <div class="pay-time">{{timer}}{{payInfo}}</div>
+                <div class="pay-time">{{num}}{{payInfo}}</div>
             </section>
             <section class="base-info success" v-if="payOk">
                 <div class="pay-title"><i class="icon icon-help-circled-alt"></i>{{title}}</div>
@@ -22,35 +22,38 @@
 
 <script>
 import Pmodal from '../../base/Modal'
-import { getPayOrder } from "../../utils/api"
+
 export default {
     data () {
         return {
             title: '',
             payRes: false,
             timer: 5,
-            payError: false,
+            payErr: false,
             payOk: false,
             payInfo: '秒后自动跳转至‘我的订单’页',
             Payment: {}
         }
     },
-    props: ['isShowModal', 'onCancel'],
+    props: ['isShowModal', 'callbackInfo'],
     components: {Pmodal},
     methods: {
         /* 支付失败 */
-        clearTimer () {
-            this.payError = true;
+        payError () {
+            console.log('start-err')
+            this.payErr = true;
             this.title = '支付失败';
-            var tiems =  setInterval(()=>{ 
-                --this.timer;
-                if(this.timer < 1) {
+            clearInterval(this.timer);
+            console.log('start-err1')
+            this.timer =setInterval(()=>{
+                this.num --
+                if(this.num < 1) {
                     this.$emit('hideModal')
-                    this.payError = false;
+                    this.payErr = false;
                     this.payOk = false;
-                    clearInterval(tiems);
+                    clearInterval(this.timer);              
                 }
-            },1000) 
+            },1000)
         },
         /* 支付成功 */
         paySuccess () {
@@ -59,7 +62,7 @@ export default {
         },
         /* 支付成功操作 */
         routerPage (page) {
-            this.payError = false;
+            this.payErr = false;
             this.payOk = false;
             this.$emit('hideModal');
             if(page === 'index') {
@@ -105,8 +108,23 @@ export default {
         }
     },
     watch: {
-        isShowModal (nValue) {
-            this.timer = 5;
+        // isShowModal () {
+        //     if(this.callbackInfo == 'err') {
+        //         this.num = 5
+        //         this.payError()
+        //     }else {
+        //         this.paySuccess()   
+        //     }
+        // },
+        callbackInfo (curVal) {
+            this.num = 5
+            console.log(curVal)
+            if (curVal === 'err') {
+                this.payError()                
+            }
+            else {
+                 this.paySuccess()   
+            }
         }
     },
     mounted () {
