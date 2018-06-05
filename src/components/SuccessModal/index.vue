@@ -7,7 +7,7 @@
                 <div class="pay-info">或者继续浏览商城其他商品</div>
                 <div class="pay-btn">
                     <span @click="routerPage('index')">再逛逛</span>
-                    <span @click="routerPage('order')">查看订单</span>
+                    <span @click="routerPage('orderdetail')">查看订单</span>
                 </div>
             </section>
         </div>
@@ -21,6 +21,7 @@ export default {
     
         }
     },
+    props:['orderCode'],
     methods: {
         /* 支付成功操作 */
         routerPage (page) {
@@ -29,8 +30,10 @@ export default {
                 wx.navigateTo({
                     url: `/pages/${page}/main`
                 })
-            }else if( page=== 'order'){
-                this.$emit('getOrderList');
+            }else if( page=== 'orderdetail'){
+                wx.navigateTo({
+                    url: `/pages/${page}/main?code=${this.orderCode}`
+                })
             }    
         },    
     },

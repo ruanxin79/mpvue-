@@ -25,10 +25,6 @@
                 <div class="load-more" v-if="loadMore">{{loadMoreText}}</div>
             </scroll-view>
         </div> 
-        <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal"></SuccessModal>
-
-        <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
-
         <div class="bottom-menu">
             <div class="btn-container">
                 <div class="btn-item" @click="toHome">
@@ -52,8 +48,6 @@ import { setPageTitle } from '../../utils/wx'
 import { getOrderList } from "../../utils/api"
 import ProductInfo from "../../components/productInfo"
 
-import SuccessModal from '../../components/SuccessModal'
-import FailModal from '../../components/FailModal'
 
 export default {
     data () {
@@ -68,12 +62,11 @@ export default {
             userInfo: {},
             successModalVisible: false,
             failModalVisible: false,
+            orderCode: ''
         }
     },
     components: {
-        ProductInfo,
-        SuccessModal,
-        FailModal
+        ProductInfo
     },
     watch: {
         orderList () {},
@@ -126,25 +119,16 @@ export default {
                 })
             }
         },
-        showModal (callbackInfo) {
-            if(callbackInfo === 'err') {
-                this.failModalVisible = true;
-            }else if(callbackInfo ==='success') {
-                this.successModalVisible = true;
-            }
-        },
-        hideSuccessModal () {
-            this.successModalVisible = false;
-        },
-        hideFailModal () {
-            this.failModalVisible = false;
-        },
+        // showModal (callbackInfo) {
+        //     if(callbackInfo === 'err') {
+        //         this.failModalVisible = true;
+        //     }else if(callbackInfo ==='success') {
+        //         this.successModalVisible = true;
+        //     }
+        // },
         toHome () {
             wx.navigateTo({url: `/pages/index/main`})
         }
-    },
-    created () {
-        //this.init()
     },
     mounted () {
         this.init()

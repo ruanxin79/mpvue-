@@ -24,15 +24,11 @@
           hover-class="other-button-hover"
           @click="payBtn(item)"
           >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
-        <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
-          :size="defaultSize" 
-          :loading="loading" 
-          :plain="plain"
-          :disabled="disabled"     
-          @click="handlerClick( item )"
-          hover-class="other-button-hover">{{item.status == 1 ? '立即支付' : '追踪订单'}}</button> -->
       </div>
     </div>
+
+    <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal" :orderCode="orderCode"></SuccessModal>
+    <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
   </div>
 </template>
 
@@ -40,6 +36,8 @@
 import store from '../store'
 import { getPayOrder } from "../utils/api"
 
+import SuccessModal from './SuccessModal'
+import FailModal from './FailModal'
 export default {
   name: 'productInfo',
   props: ['data','productStyle','type'],
@@ -50,10 +48,13 @@ export default {
       defaultSize: 'default',
       primarySize: 'default',
       warnSize: 'default',
+      orderCode: '',
       Payment: {},
       disabled: false,
       plain: false,
-      loading: false
+      loading: false,
+      failModalVisible: false,
+      successModalVisible: false
     }
   },
   watch: {
@@ -63,6 +64,10 @@ export default {
     type() {
       this.List = this.filterOrderList(this.data.orderList);
     }
+  },
+  components: {
+      SuccessModal,
+      FailModal
   },
   methods: {
     init () {
@@ -85,14 +90,15 @@ export default {
       })
     },
     payBtn (item) {
-      this.getPayInfo(item)
+      this.getPayInfo(item);
+      this.orderCode = item.code
       store.state.disabled = false
     },
     /* 支付签名 */
     getPayInfo (item) {
         let _para = {
             code : item.code
-        }
+        } 
         getPayOrder(_para).then( (res) => {
             if(res.status_code === 200) {
               this.Payment = res.data;
@@ -112,14 +118,22 @@ export default {
           'paySign': this.Payment.paySign,
           'success':function(res){
               wx.hideLoading();
-              _this.$emit('showModal','success');
+             // _this.$emit('showModal','success');
+              _this.successModalVisible = true;
           },
           'fail':function(res){
               wx.hideLoading();
-              _this.$emit('showModal','err');
+              //_this.$emit('showModal','err');
+              _this.successModalVisible = true;
           }
         })
-    }
+    },
+    hideSuccessModal () {
+        this.successModalVisible = false;
+    },
+    hideFailModal () {
+        this.failModalVisible = false;
+    },
   },
   created () {
       //this.init()
