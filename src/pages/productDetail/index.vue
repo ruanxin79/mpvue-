@@ -6,7 +6,7 @@
                 <section class="product-intro">
                     <h2 class="title">{{productDetail.full_name}}</h2>
                     <p class="feature">{{productDetail.briefly}}</p>
-                    <p class="price">￥{{productDetail.price}}</p>
+                    <p class="price">￥{{productDetail.package_price}}</p>
                     <ul class="label">
                         <li class="label-item">7天</li>
                         <li class="label-item">优选</li>
@@ -388,8 +388,8 @@ export default {
         }
         .detail-img-cont {
             .det-img {
-                width: 100%;
-                height: 360px;
+                width: 750px;
+                height: 900px;
             }
         }
     }    

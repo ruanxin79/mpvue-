@@ -73,7 +73,7 @@
                         </li>
                     </ul>
                 </section>
-                <section class="ticket-btn">
+                <section class="ticket-btn" @click="openTicketModal">
                     <div class="title">发票信息</div>
                     <div class="info">
 	                    <div class="type">个人信息 - 商品明细</div>
@@ -97,14 +97,25 @@
 
         </div>
         <div class="bottom-menu">
-            <div class="price-info"></div>
+            <div class="price-info">
+                <div class="content"><span class="title">实付金额:</span><span class="total-price">￥{{productDetail.price}}</span></div>
+            </div>
             <div class="sub-btn" @click="submit">提交订单</div> 
         </div>
-        <TicketModal :isShowModal="visible"></TicketModal>
 
-        <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal"></SuccessModal>
+        <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal" :orderCode="orderCode"></SuccessModal>
 
         <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
+
+        <TicketModal 
+            v-if="ticketModalVisible" 
+            :babels="tempraryModalData" 
+            @getTicketInfo="getTicketInfo"
+            :initHeadValue="headValue"
+            :initTaxValue="taxValue"
+        >
+            
+        </TicketModal>
     </div>
 </template>
 
@@ -138,7 +149,16 @@ export default {
             detailAddress: "",
             remark: "",
             successModalVisible: false,
-            failModalVisible: false
+            failModalVisible: false,
+            ticketModalVisible: false,
+            tempraryModalData: [
+                {name: '个人-商品明细', value: '0', checked: true},
+                {name: '公司-商品明细', value: '1', checked: false}
+            ],
+            ticketType: "0",
+            headValue: "", 
+            taxValue: "",
+            orderCode: ''
         }
     },
     components: {
@@ -171,6 +191,14 @@ export default {
                 this.region = value
             }
         },
+        getTicketInfo (list, headValue, taxValue) {
+            let findRes = list.find(item => item.checked === true);
+            this.ticketType = findRes.value;
+            this.tempraryModalData = list;
+            this.headValue = headValue;
+            this.taxValue = taxValue;
+            this.ticketModalVisible = false;
+        },
         submit () {
             let params = {
                 openid: this.openId,
@@ -187,10 +215,20 @@ export default {
                 ]
             };
 
+            if (this.ticketType === '0') {
+                params.invoice_personal = this.headValue;
+            }
+            else {
+                params.invoice_company = this.headValue;
+                params.invoice_sign = this.taxValue;
+            }
+
+
             let validater = new ParamsValidate()
             let res = validater.checkUserName(params.customer)
             .checkPhone(params.phone)
             .checkAddress(params.address)
+
             if (res.result === false) {
                 wx.showModal({
                     title: '错误',
@@ -203,8 +241,10 @@ export default {
             wx.showLoading({title: "提交中"})
             createOrder(params).then((res) => {
                 if (res.status_code === 200) {
+                    
                     wx.hideLoading()
                     let data = res.data;
+                    this.orderCode = data.code;
                     wx.requestPayment({
                        'timeStamp': String(data.timeStamp),
                        'nonceStr': data.nonceStr,
@@ -240,6 +280,9 @@ export default {
         hideFailModal () {
             this.failModalVisible = false;
         },
+        openTicketModal () {
+            this.ticketModalVisible = true;
+        }
     },
     mounted(){
         this.init()
@@ -273,9 +316,23 @@ export default {
             z-index: 10px;
             background-color: #f9f9f9;
             .price-info {
+                position: relative;
                 display: inline-block;
                 width: 480px;
                 line-height: 100px;
+                height: 100px;
+                .title {
+                    display: inline-block;
+                    margin-left: 240px;
+                    font-size: 28px;
+                }
+                .total-price {
+                    display: inline-block;
+                    margin-left: 4px;
+                    font-size: 24px;
+                    color: $red;
+                }
+
             }
             .sub-btn {
                 display: inline-block;

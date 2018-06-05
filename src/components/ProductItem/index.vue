@@ -9,7 +9,8 @@
     		<div class="other-sale-point">
     			<p v-for="item in data.other_sale_point" :key="item.key">{{item.name}}</p>
     		</div>
-    		<p class="price">￥{{data.price}}</p>
+    		<p class="price">￥{{data.price}}  <span class="del-price">￥3900</span></p>
+
     	</div>
     </div>
 </template>
@@ -100,6 +101,12 @@ export default {
     			color: $red;
     			font-weight: 400;
     			font-size: 22px; 
+                .del-price {
+                    text-decoration:line-through;
+                    color: #999;
+                    font-size: 20px;
+                    padding-left: 10px;
+                }
     		}
     	}
     }
