@@ -86,7 +86,6 @@ export default {
       })
     },
     payBtn (item) {
-      this.$emit('showModal',item);
       this.getPayInfo(item)
       store.state.disabled = false
     },

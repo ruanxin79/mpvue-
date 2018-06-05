@@ -25,12 +25,10 @@
                 <div class="load-more" v-if="loadMore">{{loadMoreText}}</div>
             </scroll-view>
         </div> 
-        <PayModal 
-            :isShowModal="isShowPayModal"
-            :callbackInfo="callbackInfo"
-            @hideModal="payModalCancel"
-            @getOrderList='getMyOrderList(1)'>
-        </PayModal>
+        <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal"></SuccessModal>
+
+        <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
+
         <div class="bottom-menu">
             <div class="btn-container">
                 <div class="btn-item" @click="toHome">
@@ -53,7 +51,10 @@ import store from '../../store'
 import { setPageTitle } from '../../utils/wx'
 import { getOrderList } from "../../utils/api"
 import ProductInfo from "../../components/productInfo"
-import PayModal from '../../components/PayModal'
+
+import SuccessModal from '../../components/SuccessModal'
+import FailModal from '../../components/FailModal'
+
 export default {
     data () {
         return {
@@ -64,14 +65,15 @@ export default {
             productStyle: 'myOrder',
             status: 0,
             orderList: [],
-            isShowPayModal: false,
-            callbackInfo: '',
-            userInfo: {}
+            userInfo: {},
+            successModalVisible: false,
+            failModalVisible: false,
         }
     },
     components: {
-       ProductInfo,
-       PayModal
+        ProductInfo,
+        SuccessModal,
+        FailModal
     },
     watch: {
         orderList () {},
@@ -125,11 +127,17 @@ export default {
             }
         },
         showModal (callbackInfo) {
-            this.isShowPayModal = true;
-            this.callbackInfo = callbackInfo;
+            if(callbackInfo === 'err') {
+                this.failModalVisible = true;
+            }else if(callbackInfo ==='success') {
+                this.successModalVisible = true;
+            }
         },
-        payModalCancel () {
-            this.isShowPayModal = false
+        hideSuccessModal () {
+            this.successModalVisible = false;
+        },
+        hideFailModal () {
+            this.failModalVisible = false;
         },
         toHome () {
             wx.navigateTo({url: `/pages/index/main`})

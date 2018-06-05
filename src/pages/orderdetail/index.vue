@@ -78,16 +78,7 @@
                 </div> 
             </scroll-view> 
             <div class="noOrder" v-else>{{noOrderText}}</div>
-      
-        
         </div> 
-        <PayModal 
-            ref="children"
-            :isShowModal="isShowPayModal"
-            :callbackInfo="callbackInfo"
-            @hideModal="payModalCancel"
-            @getOrderList='getOrderList(1)'>
-        </PayModal>  
         <div class="bottom-menu">
             <div class="btn-container">
                 <div class="btn-item" @click="toHome">
@@ -100,9 +91,10 @@
                     <i class="icon-user sicon-normal"></i>
                     <span class="words-normal">我的订单</span>
                 </div> -->
-
             </div>
         </div> 
+        <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal"></SuccessModal>
+        <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
     </div>
 </template>
 
@@ -113,8 +105,9 @@ import store from '../../store'
 import {setPageTitle} from '../../utils/wx'
 
 import { getOrderDetail ,getPayOrder} from '../../utils/api' 
-      
-import  PayModal from "../../components/PayModal"
+
+import SuccessModal from '../../components/SuccessModal'
+import FailModal from '../../components/FailModal'
 
 const PROMISEINFO = [ {
                     "title":        "支持七天无理由退换货",
@@ -125,21 +118,6 @@ const PROMISEINFO = [ {
                     "title":        "商品均由商城精挑细选",
                     "title_icon":   "优选",
                     "desc":         "商城所有上架商品均经过精心挑选，我们会选择质量优、用户满意度高的商品。"
-                    },
-                    {
-                    "title":        "购机用户提供一对一管家服务",
-                    "title_icon":   "管家",
-                    "desc":         "服务管家在机器的购买、使用、维修、更换时提供全流程协助支持。"
-                    },
-                    {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门lenovo",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门think",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
                     },
                     {
                     "title":        "全场商品包邮",
@@ -155,23 +133,21 @@ export default {
             orderDetail: {},
             userInfo: {},
             status: '',
-            callbackInfo: '',
             loadMore: false,
             isShow: false,
-            isShowPayModal: false,
+            successModalVisible: false,
+            failModalVisible: false,
             promiseInfo: PROMISEINFO,
             code: '',
             id: ''
         }
     },
     components: {
-       PayModal
+       FailModal,
+       SuccessModal
     },
     watch: {
         orderList () {
-            // this.orderList.product.map((k) => {
-            //    k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
-            // })
             this.status = this.setStatus(this.orderList.status);
         }
     },
@@ -249,13 +225,6 @@ export default {
                 })
             }
         },
-        payModalCancel () {
-            this.isShowPayModal = false
-        },
-        showModal (callbackInfo) {
-            this.isShowPayModal = true;
-            this.callbackInfo = callbackInfo;
-        },
         toPayOrder () {
             let item = {
                 code: this.$mp.query.code
@@ -286,13 +255,19 @@ export default {
             'paySign': this.Payment.paySign,
             'success':function(res){
                 wx.hideLoading();
-                _this.showModal("success")
+                _this.successModalVisible = true;
             },
             'fail':function(res){
                 wx.hideLoading();
-                _this.showModal("err")
+                _this.failModalVisible = true;
             }
             })
+        },
+        hideSuccessModal () {
+            this.successModalVisible = false;
+        },
+        hideFailModal () {
+            this.failModalVisible = false;
         },
         toHome () {
             wx.navigateTo({url: `/pages/index/main`})
