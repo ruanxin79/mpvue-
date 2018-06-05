@@ -93,7 +93,7 @@ export default {
             .pay-btn {
                 width: 530px;
                 position: absolute;
-                bottom: 5px;
+                bottom: -5px;
                 left: 0;
                 text-align: center;
                 display: flex;
