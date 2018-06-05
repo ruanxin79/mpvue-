@@ -102,6 +102,9 @@
         </div>
         <TicketModal :isShowModal="visible"></TicketModal>
 
+        <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal"></SuccessModal>
+
+        <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
     </div>
 </template>
 
@@ -119,7 +122,9 @@ import Label from '../../components/Label'
 
 import TicketModal from '../../components/TicketModal'
 
+import SuccessModal from '../../components/SuccessModal'
 
+import FailModal from '../../components/FailModal'
 
 //const MD5 = require('md5')
 export default {
@@ -132,15 +137,15 @@ export default {
             telephone: '',
             detailAddress: "",
             remark: "",
-            isShowPayModal: false,
-            callbackInfo: "",
-
+            successModalVisible: false,
+            failModalVisible: false
         }
     },
     components: {
         Label,
         TicketModal,
-        PayModal
+        SuccessModal,
+        FailModal
     },
     computed: {
         productDetail () {
@@ -198,6 +203,7 @@ export default {
             wx.showLoading({title: "提交中"})
             createOrder(params).then((res) => {
                 if (res.status_code === 200) {
+                    wx.hideLoading()
                     let data = res.data;
                     wx.requestPayment({
                        'timeStamp': String(data.timeStamp),
@@ -205,15 +211,11 @@ export default {
                        'package': data.package,
                        'signType': 'MD5',
                        'paySign': data.paySign,
-                       success: (res) => {
-                            wx.hideLoading()
-
-                            
-                       },
-                       fail: (res) => {
-                            wx.hideLoading()
-     
-                            
+                        success: (res) => {
+                            this.successModalVisible = true;
+                        },
+                        fail: (res) => {
+                            this.failModalVisible = true; 
                        }
                     })
 
@@ -225,14 +227,19 @@ export default {
                         content: res.message
                     })   
                 }
-
             }).catch((e) => {
                 console.log(e)
             })
         },
         payModalCancel () {
             this.isShowPayModal = false
-        }
+        },
+        hideSuccessModal () {
+            this.successModalVisible = false;
+        },
+        hideFailModal () {
+            this.failModalVisible = false;
+        },
     },
     mounted(){
         this.init()
