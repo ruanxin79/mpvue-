@@ -79,7 +79,6 @@ export default {
         }   
         return _newArr;
     },
-    /* 追踪订单 、 立即支付  */
     handlerClick (item) { 
       wx.navigateTo({
         url: `/pages/orderdetail/main?code=${item.code}`

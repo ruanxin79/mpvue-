@@ -211,6 +211,7 @@ export default {
                 }
                 .icon-home {
                     color: #999;
+                    font-size: 30px;
                 }
                 .words-normal {
                     font-size: 26px;
