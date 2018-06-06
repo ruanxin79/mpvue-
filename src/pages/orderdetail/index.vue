@@ -169,7 +169,7 @@ export default {
         /* 商品详情 */
         handlerClick (item) {
             wx.navigateTo({
-                url: `/pages/productDetail/main?productId=${item.productId}&code=${item.code}`
+                url: `/pages/productDetail/main?productId=${item.serial_number}`
             })
         },
         /* 订单列表 */
@@ -203,19 +203,13 @@ export default {
                     x = '待付款'
                     break;
                 case 2:
-                    x = '已付款'
+                    x = '待发货'
                     break;
                 case 3:
                     x = '已发货'
                     break;
                 case 4:
                     x = '交易成功'
-                    break;
-                case 5:
-                    x = '退款'
-                    break;
-                case 6:
-                    x = '异常'
                     break;
             }
             return x;   
@@ -273,7 +267,8 @@ export default {
             this.failModalVisible = false;
         },
         toHome () {
-            wx.navigateTo({url: `/pages/index/main`})
+            wx.navigateBack()
+            //wx.navigateTo({url: `/pages/index/main`})
         }
     },
     created () {

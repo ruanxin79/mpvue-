@@ -119,15 +119,19 @@ export default {
                 })
             }
         },
-        // showModal (callbackInfo) {
-        //     if(callbackInfo === 'err') {
-        //         this.failModalVisible = true;
-        //     }else if(callbackInfo ==='success') {
-        //         this.successModalVisible = true;
-        //     }
-        // },
+        showModal (callbackInfo) {
+            if(callbackInfo === 'err') {
+                //this.failModalVisible = true;
+            }else if(callbackInfo ==='success') {
+                //this.successModalVisible = true;
+                this.getMyOrderList(1);  
+            }
+        },
         toHome () {
-            wx.navigateTo({url: `/pages/index/main`})
+            //wx.navigateTo({url: `/pages/index/main`})
+            wx.reLaunch({
+                url: `/pages/index/main`
+            })
         }
     },
     mounted () {
