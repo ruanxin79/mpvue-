@@ -13,14 +13,12 @@
                         </div>
                         <div class="acInfo">{{info[orderList.status]}}</div>
                     </div>
-                    <!-- <div class="order-logistics" v-if="orderDetail">
-                        <div class="logistics-status">
-                            <span>最新状态:</span>{{status}}
-                        </div>
+                    <div class="order-logistics" v-if="orderList">
                         <div class="userInfo">
-                            <span>{{orderDetail.customer}}:</span> {{orderDetail.phone}}
+                            <span>{{orderList.customer}} :</span> {{orderList.phone}}
                         </div>
-                    </div> -->
+                        <div>{{orderList.address}}</div>
+                    </div>
                     <div class="order-list">
                         <div v-for="(item, index) in orderList.product" :key="index">
                             <div class="goods-title" 
@@ -35,7 +33,7 @@
                             </div>
                             <div class="goods-tags">
                                 <span v-for="(j,ind) in promiseInfo" :key="ind">{{j.title_icon}}</span>
-                                <i class="icon icon-help-circled-alt"></i>
+                                <!-- <i class="icon icon-help-circled-alt"></i> -->
                             </div>
                             <ul class="goods-service">
                                 <li v-for="(k,i) in item.gift" :key="i" v-if="item.gift">
@@ -61,8 +59,8 @@
                         </div>
                     </div>
                     <div class="order-price">
-                        <p class="zxg_discount" >尊享卡优惠<span v-if="orderList.zxg_discount">￥{{orderList.zxg_discount}}</span></p>
-                        <p class="service_price" >客服调价<span v-if="orderList.service_price">￥{{orderList.service_price}}</span></p>
+                        <!-- <p class="zxg_discount" >尊享卡优惠<span v-if="orderList.zxg_discount">￥{{orderList.zxg_discount}}</span></p>
+                        <p class="service_price" >客服调价<span v-if="orderList.service_price">￥{{orderList.service_price}}</span></p> -->
                         <p class="total_price">合计（免运费）<span>￥{{orderList.original_total}}</span></p>
                     </div>
                     <div class="goods-line"><i></i></div>
@@ -380,7 +378,7 @@ export default {
                 padding: 30px 0; 
                 font-size: 24px;
                 span {
-                    min-width: 120px;
+                    padding-right: 20px;
                     display: inline-block;
                 }
             }
