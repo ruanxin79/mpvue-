@@ -204,10 +204,13 @@ export default {
                 invoice_sign: '',
                 products: [
                     {
-                        computer: this.productDetail.serial_number,
+                        computer: [
+                            this.productDetail.serial_number
+                        ]
                     }
                 ]
             };
+
 
             //判断有无发票
             if (this.ticketType === '0') {
@@ -223,6 +226,9 @@ export default {
                 params.products[0].gift = this.productDetail.gifts.map(item => item.serial_number);
             }
 
+            console.log(params)
+            return;
+            
             if (Number(this.productDetail.stock) <= 0) {
                 wx.showModal({
                     title: '错误',
