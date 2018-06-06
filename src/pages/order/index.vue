@@ -15,7 +15,7 @@
                     <div class="f-item">
                         <div class="f-title">联系电话: </div>
                         <div class="f-input">
-                        	<input type="text" class="cont" v-model="telephone"/>
+                        	<input type="number" class="cont" v-model="telephone"/>
                         </div>
                     </div>
                     <div class="f-item">
@@ -26,9 +26,11 @@
                                 <span class="region">{{region[0]}}</span>
                                 <span class="region">{{region[1]}}</span>
                                 <span class="region">{{region[2]}}</span>
+                                <span class="arror-cont"></span>
+                                
                             </div>
-                        </picker>                                
-                        <div class="arrow"></div>
+                        </picker>      
+                        <span class="narrow"></span>                          
                     </div>
                     <div class="f-item">
                         <div class="f-title">详细地址: </div>
@@ -43,7 +45,7 @@
                         <div class="title">
                             <p class="sale-one">{{productDetail.full_name}}</p>
                         </div>
-                        <p class="price">￥{{productDetail.price}}</p>
+                        <p class="price">￥{{productDetail.package_price}}</p>
                     </div>
                 </section>
                 <section class="label-cont">
@@ -51,25 +53,9 @@
                 </section>
                 <section class="sale-cont" v-if="productDetail.gifts && productDetail.gifts.length>0">
                     <ul class="parts-content">
-                        <li class="parts-content-item">
-                            <span class="name">私人定制</span>
-                            <span class="price">￥100</span>
-                        </li>
-                        <li class="parts-content-item">
-                            <span class="name">私人定制</span>
-                            <span class="price">￥100</span>
-                        </li>
-                        <li class="parts-content-item">
-                            <span class="name">私人定制</span>
-                            <span class="price">￥100</span>
-                        </li>
-                        <li class="parts-content-item">
-                            <span class="name">私人定制</span>
-                            <span class="price">￥100</span>
-                        </li>
-                        <li class="parts-content-item">
-                            <span class="name">私人定制</span>
-                            <span class="price">￥100</span>
+                        <li class="parts-content-item" v-for="item in productDetail.gifts" :key="item.id">
+                            <div class="name">{{item.abbreviation}}</div>
+                            <div class="price">￥{{item.price}}</div>
                         </li>
                     </ul>
                 </section>
@@ -83,7 +69,12 @@
                 <section class="remark-container">
                 	<div class="title">备注</div>
                 	<div class="content">
-                		<input type="text" :placeholder="remarkPlaceholder" class="input-content" v-model="remark"/>
+                		<input 
+                            type="text" 
+                            :placeholder="remarkPlaceholder" 
+                            class="input-content" 
+                            v-model="remark" 
+                            placeholder-class="place-holder"/>
                 	</div>
                 </section>
                 <section class="remark-words">
@@ -98,7 +89,10 @@
         </div>
         <div class="bottom-menu">
             <div class="price-info">
-                <div class="content"><span class="title">实付金额:</span><span class="total-price">￥{{productDetail.price}}</span></div>
+                <div class="content">
+                    <span class="title">实付金额:</span>
+                    <span class="total-price">￥{{productDetail.package_price}}</span>
+                </div>
             </div>
             <div class="sub-btn" @click="submit">提交订单</div> 
         </div>
@@ -215,6 +209,7 @@ export default {
                 ]
             };
 
+            //判断有无发票
             if (this.ticketType === '0') {
                 params.invoice_personal = this.headValue;
             }
@@ -223,11 +218,23 @@ export default {
                 params.invoice_sign = this.taxValue;
             }
 
+            //判断有无赠品
+            if (this.productDetail.gifts && this.productDetail.gifts.length > 0) {
+                params.products[0].gift = this.productDetail.gifts.map(item => item.serial_number);
+            }
+
+            if (Number(this.productDetail.stock) <= 0) {
+                wx.showModal({
+                    title: '错误',
+                    content: '库存不足了，请大官人再看看别的吧！'
+                })                   
+            }
 
             let validater = new ParamsValidate()
             let res = validater.checkUserName(params.customer)
             .checkPhone(params.phone)
             .checkAddress(params.address)
+
 
             if (res.result === false) {
                 wx.showModal({
@@ -350,6 +357,7 @@ export default {
             background-color: #fff;
             margin-top: 20px;
             .f-item {
+                position: relative;
                 height: 74px;
                 line-height: 74px;
                 border-top: 2px solid #e0e0e0;
@@ -401,21 +409,36 @@ export default {
                     font-size: 26px;
                     text-align: center;   
                 }
-                .arrow {
-                    width: 20px;
-                    height: 20px;
-                    border-top: 2px solid #999;
-                    border-right: 2px solid #999;
-                    transform: rotate(45deg);
-                    position: relative;
-					top:24rpx;
-					left:50rpx;
+                .arror-cont {
+                    height: 74px;
+                    width: 90px;
+                    .arrow {
+                        width: 20px;
+                        height: 20px;
+                        border-top: 2px solid #999;
+                        border-right: 2px solid #999;
+                        transform: rotate(45deg);
+                        position: relative;
+                        top:24rpx;
+                        left:50rpx;
 
+                    }
                 }
             }
         }
 
+        .narrow {
+            width: 20px;
+            height: 20px;
+            border-top: 2px solid #999;
+            border-right: 2px solid #999;
+            transform: rotate(45deg);
+            position: relative;
+            top:24rpx;
+            right:20rpx;
+            z-index: 200;
 
+        }
 
 
 
@@ -428,6 +451,7 @@ export default {
             margin-bottom: 2px;
             background-color: #fff;
             margin-top: 20px;
+            padding: 20px 0;
             .product-img {
                 width: 280px;
                 height: 160px;
@@ -481,6 +505,14 @@ export default {
                     .name {
                         float: left;
                         margin-left: 14px;
+                        width: 210px;
+                        display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+
+                        -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+
+                        -webkit-line-clamp: 1; /** 显示的行数 **/
+
+                        overflow: hidden;  /** 隐藏超出的内容 **/   
                     }
                     .price {
                         float: right;
@@ -546,10 +578,13 @@ export default {
 
  				}
  				.input-content::placeholder {
- 					text-decoration:overline;
-				    letter-spacing:5px;
+ 					text-decoration: overline;
+				    text-indent: 5px;
 				    color:#999;
  				}
+                .input-content ::-webkit-input-placeholder {
+                    text-indent: 5px;
+                }
  			}
  		}
  		.remark-words {
@@ -574,5 +609,8 @@ export default {
  			}
 
  		}
+        .place-holder {
+            color: $red;
+        }
     }
 </style>

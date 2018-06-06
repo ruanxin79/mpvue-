@@ -29,7 +29,7 @@ export default {
     props: ['giftList', 'title'],
     methods: {
         onCancel () {
-            this.isShowModal = false;
+            this.$emit('hideGiftModal')
         }
     },
     computed: {
@@ -140,6 +140,7 @@ export default {
                         }
                         .orgin-price {
                             color: #999;
+                            text-decoration: line-through;
                         }
                     }
                 }

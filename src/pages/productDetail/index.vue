@@ -6,7 +6,12 @@
                 <section class="product-intro">
                     <h2 class="title">{{productDetail.full_name}}</h2>
                     <p class="feature">{{productDetail.briefly}}</p>
-                    <p class="price">￥{{productDetail.package_price}}</p>
+                    <p class="price">
+                        <span>￥{{productDetail.package_price}}</span>
+                        <span class="old-price" v-if="productDetail.package_original_price">
+                            ￥{{productDetail.package_original_price}}
+                        </span>
+                    </p>
                     <ul class="label">
                         <li class="label-item">7天</li>
                         <li class="label-item">优选</li>
@@ -17,7 +22,7 @@
                     <p class="cont">促销</p>
                     <p class="sale-word">赠</p>
                     <p class="selected-reminder">
-                        {{productDetail.gifts && productDetail.gifts.length > 0 ? productDetail.gifts[0].full_name+'等'+productDetail.gifts.length+'个' : ''}}
+                        {{productDetail.gifts && productDetail.gifts.length > 0 ? productDetail.gifts[0].full_name+'...'+productDetail.gifts.length+'个赠品' : ''}}
                     </p>
                 </section>
 <!--                 <section class="sale-menu" @click="showPartModal">
@@ -26,7 +31,7 @@
                     <p class="selected-reminder">一年意外保护等4个</p>
                 </section> -->
                 <section class="detail-img-cont">
-                    <img :src="item.image" v-for="item in productDetail.detail_images" :key="item.id" class="det-img">
+                    <img :src="item.image" v-for="item in productDetail.detail_images" :key="item.id" class="det-img" mode="widthFix">
                 </section>
             </scroll-view>
         </div>
@@ -43,7 +48,7 @@
             :isShowModal="isShowPartModal"
             :onCancel="partModalCancel"
         ></PartModal>
-        <GiftModal v-if="giftModelVisible" title="促销"></GiftModal>
+        <GiftModal v-if="giftModelVisible" title="促销" @hideGiftModal="hideGiftModal"></GiftModal>
     </div>
 </template>
 
@@ -98,6 +103,9 @@ export default {
 
                 setPageTitle('智享生活 - 商品详情')
             }
+        },
+        hideGiftModal () {
+            this.giftModelVisible = false
         },
         partModalCancel () {
             this.isShowPartModal = false;
@@ -321,10 +329,21 @@ export default {
                 font-weight: 400;
             }
             .price {
+
                 font-size: 28px;
                 color: $red;
                 font-weight: 600;
                 line-height: 40px;
+                span{
+                    display: inline-block;
+                }
+                
+                .old-price {
+                     font-size: 24px;
+                     text-decoration: line-through;
+                     color: #999;
+                     margin-left: 6px;
+                }
             }
             .label {
                 width: 660px;
@@ -388,8 +407,7 @@ export default {
         }
         .detail-img-cont {
             .det-img {
-                width: 750px;
-                height: 900px;
+                width: 100%;
             }
         }
     }    

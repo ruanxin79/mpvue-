@@ -16,7 +16,7 @@
                 </div>   
                 <div class="input-line" v-if="companyVisible">
                     <div class="title">税号</div>
-                    <input type="text" class="input-item" placeholder="请输入税号" v-model="taxValue"/>
+                    <input type="number" class="input-item" placeholder="请输入税号" v-model="taxValue"/>
                 </div>            
             </div>
             <div class="confirm-btn" @click="comfirm">确定</div>

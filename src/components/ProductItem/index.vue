@@ -9,7 +9,7 @@
     		<div class="other-sale-point">
     			<p v-for="item in data.other_sale_point" :key="item.key">{{item.name}}</p>
     		</div>
-    		<p class="price">￥{{data.price}}  <span class="del-price">￥3900</span></p>
+    		<p class="price">￥{{data.package_price}}  <span class="del-price">￥{{data.package_original_price}}</span></p>
 
     	</div>
     </div>
