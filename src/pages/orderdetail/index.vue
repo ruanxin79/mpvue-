@@ -11,7 +11,7 @@
                             <span class="icon icon-clock"></span>
                             <span>{{status}}</span>
                         </div>
-                        <div class="acInfo">{{info}}</div>
+                        <div class="acInfo">{{info[orderList.status]}}</div>
                     </div>
                     <div class="order-logistics" v-if="orderList">
                         <div class="userInfo">
@@ -125,21 +125,6 @@ const PROMISEINFO = [ {
                     "desc":         "商城所有上架商品均经过精心挑选，我们会选择质量优、用户满意度高的商品。"
                     },
                     {
-                    "title":        "购机用户提供一对一管家服务",
-                    "title_icon":   "管家",
-                    "desc":         "服务管家在机器的购买、使用、维修、更换时提供全流程协助支持。"
-                    },
-                    {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门lenovo",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门think",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    {
                     "title":        "全场商品包邮",
                     "title_icon":   "包邮",
                     "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
@@ -147,7 +132,12 @@ const PROMISEINFO = [ {
 export default {
     data () {
         return {
-            info: '好商品不等人，请尽快完成付款',
+            info: [
+                '如需再次购买，请在智享生活商城下单',
+                '好商品不等人，请尽快完成付款',
+                '您的订单已经收到，请耐心等待发货',
+                '您的商品已经发出，请注意查收',
+                '商品已经送达，感谢您在智享商城购物，欢迎您的再次光临'],
             noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             orderList: {},
             orderDetail: {},
@@ -167,9 +157,6 @@ export default {
     },
     watch: {
         orderList () {
-            // this.orderList.product.map((k) => {
-            //    k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
-            // })
             this.status = this.setStatus(this.orderList.status);
         }
     },
@@ -287,7 +274,10 @@ export default {
             })
         },
         toHome () {
-            wx.navigateBack()
+            wx.reLaunch({
+                url: `/pages/index/main`
+            })
+            //wx.navigateBack()
             //wx.navigateTo({url: `/pages/index/main`})
         }
     },
@@ -512,7 +502,14 @@ export default {
                 .left {
                     max-width: 216px;
                     height: 45px;
-                    overflow: hidden;
+
+                    display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+
+                    -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+
+                    -webkit-line-clamp: 2; /** 显示的行数 **/
+
+                    overflow: hidden;  /** 隐藏超出的内容 **/                    
                 }
                 span {
                     display: flex;
