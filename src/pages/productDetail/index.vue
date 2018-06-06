@@ -96,6 +96,7 @@ export default {
     methods: {
         init () {
             let {productId} = this.$root.$mp.query;
+            this.giftModelVisible = false;
             if (productId) {
                 //获取产品详情信息
                 // productId = 'COMPUTER-654826';

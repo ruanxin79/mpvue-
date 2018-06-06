@@ -181,6 +181,7 @@ export default {
     methods: {
         init () {
             setPageTitle('填写订单');
+            this.ticketModalVisible = false;
         },
         bindRegionChange (e) {
             let value = e.target.value;
