@@ -74,7 +74,7 @@ export default {
         init () {
             setPageTitle('智享生活');
             store.dispatch('initPage', {})
-            getHotProductList({page: 1,index: 1000}).then((res)=> {
+            getHotProductList({page: 1,index: 2}).then((res)=> {
                 res.data.productList && res.data.productList.forEach((item) => {
                     var temp = [];
                     for (var k in item.sell_point) {
@@ -98,9 +98,6 @@ export default {
         }
     },
     created () {
-        //this.init()
-    },
-    mounted () {
         this.init()
     }
 }

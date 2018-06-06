@@ -52,7 +52,7 @@ export default {
             }
         },
         comfirm () {
-            this.$emit('getTicketInfo', this.babels, this.taxValue, this.headValue)
+            this.$emit('getTicketInfo', this.babels, this.headValue, this.taxValue)
         }
     },
     mounted () {
