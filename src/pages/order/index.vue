@@ -344,7 +344,7 @@ export default {
                 .title {
                     display: inline-block;
                     margin-left: 240px;
-                    font-size: 28px;
+                    font-size: 22px;
                 }
                 .total-price {
                     display: inline-block;
