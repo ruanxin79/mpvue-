@@ -62,7 +62,7 @@
                 <section class="ticket-btn" @click="openTicketModal">
                     <div class="title">发票信息</div>
                     <div class="info">
-	                    <div class="type">个人信息 - 商品明细</div>
+	                    <div class="type">{{ticketType == 0 ? "个人信息" : "公司"}} - 商品明细</div>
 	                    <div class="arrow"></div>
                     </div>
                 </section>
@@ -90,8 +90,11 @@
         <div class="bottom-menu">
             <div class="price-info">
                 <div class="content">
-                    <span class="title">实付金额:</span>
-                    <span class="total-price">￥{{productDetail.package_price}}</span>
+                    <div class="title">实付金额:</div>
+                    <div class="total-price">
+                        <span class="large">￥{{largePrice}}</span>
+                        <span class="small">.{{smallPrice}}</span>
+                    </div>
                 </div>
             </div>
             <div class="sub-btn" @click="submit">提交订单</div> 
@@ -167,6 +170,12 @@ export default {
         },
         openId () {
             return store.state.openId
+        },
+        largePrice () {
+            return store.state.productDetail.package_price.split('.')[0]
+        },
+        smallPrice () {
+            return store.state.productDetail.package_price.split('.')[1]
         }
     },
     methods: {
@@ -225,9 +234,6 @@ export default {
             if (this.productDetail.gifts && this.productDetail.gifts.length > 0) {
                 params.products[0].gift = this.productDetail.gifts.map(item => item.serial_number);
             }
-
-            console.log(params)
-            return;
             
             if (Number(this.productDetail.stock) <= 0) {
                 wx.showModal({
@@ -344,6 +350,9 @@ export default {
                     margin-left: 4px;
                     font-size: 24px;
                     color: $red;
+                    .large {
+                        font-size: 28px;
+                    }
                 }
 
             }

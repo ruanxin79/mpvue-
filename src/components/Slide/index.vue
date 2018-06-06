@@ -1,6 +1,6 @@
 <template>
     <section class="banner-cont">
-        <swiper indicator-dots circular indicator-active-color="#fff">
+        <swiper indicator-dots circular indicator-active-color="#fff" autoplay interval="3000">
             <swiper-item v-for="item in data" :key="item.id">
                 <img :src="item.image" class="slide-image" />
             </swiper-item>
