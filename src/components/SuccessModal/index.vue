@@ -21,7 +21,7 @@ export default {
     
         }
     },
-    props: ['orderCode'],
+    props:['orderCode'],
     methods: {
         /* 支付成功操作 */
         routerPage (page) {

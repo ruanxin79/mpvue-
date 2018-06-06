@@ -8,7 +8,7 @@
         @click="handlerClick( item )"
         v-for="( k , i) in item.computer" :key="i">
         <div class="product-img">
-          <img :src="k.product_thumb" alt="" mode="scaleToFill">
+          <img :src="k.product_thumb" alt="" mode="aspectFill">
         </div>
         <div class="product-text">
           <p class="product-ellipsis">{{k.product_full_name}}</p>
@@ -24,15 +24,11 @@
           hover-class="other-button-hover"
           @click="payBtn(item)"
           >{{item.status == 1 ? '立即支付' : '追踪订单'}}</button>
-        <!-- <button :type="item.status == 1 ? 'warn' : 'default' " 
-          :size="defaultSize" 
-          :loading="loading" 
-          :plain="plain"
-          :disabled="disabled"     
-          @click="handlerClick( item )"
-          hover-class="other-button-hover">{{item.status == 1 ? '立即支付' : '追踪订单'}}</button> -->
       </div>
     </div>
+
+    <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal" :orderCode="orderCode"></SuccessModal>
+    <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
   </div>
 </template>
 
@@ -40,20 +36,25 @@
 import store from '../store'
 import { getPayOrder } from "../utils/api"
 
+import SuccessModal from './SuccessModal'
+import FailModal from './FailModal'
 export default {
   name: 'productInfo',
   props: ['data','productStyle','type'],
   data () {
     return {
       List: [],
-      stateItem: ['交易关闭','待付款','已付款','已发货','交易成功','退款','异常'],
+      stateItem: ['交易关闭','待付款','待发货','已发货','交易成功'],
       defaultSize: 'default',
       primarySize: 'default',
       warnSize: 'default',
+      orderCode: '',
       Payment: {},
       disabled: false,
       plain: false,
-      loading: false
+      loading: false,
+      failModalVisible: false,
+      successModalVisible: false
     }
   },
   watch: {
@@ -63,6 +64,10 @@ export default {
     type() {
       this.List = this.filterOrderList(this.data.orderList);
     }
+  },
+  components: {
+      SuccessModal,
+      FailModal
   },
   methods: {
     init () {
@@ -79,22 +84,22 @@ export default {
         }   
         return _newArr;
     },
-    /* 追踪订单 、 立即支付  */
     handlerClick (item) { 
       wx.navigateTo({
         url: `/pages/orderdetail/main?code=${item.code}`
       })
     },
     payBtn (item) {
-      this.$emit('showModal',item);
-      this.getPayInfo(item)
+      this.getPayInfo(item);
+      this.orderCode = item.code
       store.state.disabled = false
     },
     /* 支付签名 */
     getPayInfo (item) {
         let _para = {
             code : item.code
-        }
+        } 
+        wx.showLoading()
         getPayOrder(_para).then( (res) => {
             if(res.status_code === 200) {
               this.Payment = res.data;
@@ -105,7 +110,7 @@ export default {
     /* 订单支付 */
     orderPay () {
         let _this = this;
-        wx.showLoading()
+        wx.hideLoading();
         wx.requestPayment({
           'timeStamp': String(this.Payment.timeStamp),
           'nonceStr': this.Payment.nonceStr,
@@ -113,15 +118,21 @@ export default {
           'signType': this.Payment.signType,
           'paySign': this.Payment.paySign,
           'success':function(res){
-              wx.hideLoading();
               _this.$emit('showModal','success');
+              _this.successModalVisible = true;
           },
           'fail':function(res){
-              wx.hideLoading();
-              _this.$emit('showModal','err');
+              //_this.$emit('showModal','err');
+              _this.failModalVisible = true;
           }
         })
-    }
+    },
+    hideSuccessModal () {
+        this.successModalVisible = false;
+    },
+    hideFailModal () {
+        this.failModalVisible = false;
+    },
   },
   created () {
       //this.init()

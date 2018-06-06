@@ -25,12 +25,6 @@
                 <div class="load-more" v-if="loadMore">{{loadMoreText}}</div>
             </scroll-view>
         </div> 
-        <PayModal 
-            :isShowModal="isShowPayModal"
-            :callbackInfo="callbackInfo"
-            @hideModal="payModalCancel"
-            @getOrderList='getMyOrderList(1)'>
-        </PayModal>
         <div class="bottom-menu">
             <div class="btn-container">
                 <div class="btn-item" @click="toHome">
@@ -53,7 +47,8 @@ import store from '../../store'
 import { setPageTitle } from '../../utils/wx'
 import { getOrderList } from "../../utils/api"
 import ProductInfo from "../../components/productInfo"
-import PayModal from '../../components/PayModal'
+
+
 export default {
     data () {
         return {
@@ -64,14 +59,14 @@ export default {
             productStyle: 'myOrder',
             status: 0,
             orderList: [],
-            isShowPayModal: false,
-            callbackInfo: '',
-            userInfo: {}
+            userInfo: {},
+            successModalVisible: false,
+            failModalVisible: false,
+            orderCode: ''
         }
     },
     components: {
-       ProductInfo,
-       PayModal
+        ProductInfo
     },
     watch: {
         orderList () {},
@@ -125,18 +120,19 @@ export default {
             }
         },
         showModal (callbackInfo) {
-            this.isShowPayModal = true;
-            this.callbackInfo = callbackInfo;
-        },
-        payModalCancel () {
-            this.isShowPayModal = false
+            if(callbackInfo === 'err') {
+                //this.failModalVisible = true;
+            }else if(callbackInfo ==='success') {
+                //this.successModalVisible = true;
+                this.getMyOrderList(1);  
+            }
         },
         toHome () {
-            wx.navigateTo({url: `/pages/index/main`})
+            //wx.navigateTo({url: `/pages/index/main`})
+            wx.reLaunch({
+                url: `/pages/index/main`
+            })
         }
-    },
-    created () {
-        //this.init()
     },
     mounted () {
         this.init()
@@ -203,6 +199,7 @@ export default {
                 }
                 .icon-home {
                     color: #999;
+                    font-size: 30px;
                 }
                 .words-normal {
                     font-size: 26px;
