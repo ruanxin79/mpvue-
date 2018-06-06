@@ -124,7 +124,7 @@ export default {
           'fail':function(res){
               wx.hideLoading();
               //_this.$emit('showModal','err');
-              _this.successModalVisible = true;
+              _this.failModalVisible = true;
           }
         })
     },
