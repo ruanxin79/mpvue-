@@ -116,6 +116,13 @@ export default {
         //     this.isShowPartModal = true;
         // },
         toSetOrder () {
+            if (Number(this.productDetail.stock) <= 0) {
+                wx.showModal({
+                    title: '错误',
+                    content: '库存不足了，请大官人再看看别的吧！'
+                })     
+                return              
+            }
             wx.navigateTo({url: `/pages/order/main`})
         },
         toHome () {
