@@ -11,7 +11,7 @@
                             <span class="icon icon-clock"></span>
                             <span>{{status}}</span>
                         </div>
-                        <div class="acInfo">{{info[orderList.status]}}</div>
+                        <div class="acInfo">{{info}}</div>
                     </div>
                     <div class="order-logistics" v-if="orderList">
                         <div class="userInfo">
@@ -132,12 +132,7 @@ const PROMISEINFO = [ {
 export default {
     data () {
         return {
-            info: [
-                '如需再次购买，请在智享生活商城下单',
-                '好商品不等人，请尽快完成付款',
-                '您的订单已经收到，请耐心等待发货',
-                '您的商品已经发出，请注意查收',
-                '商品已经送达，感谢您在智享商城购物，欢迎您的再次光临'],
+            info: '好商品不等人，请尽快完成付款',
             noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             orderList: {},
             orderDetail: {},

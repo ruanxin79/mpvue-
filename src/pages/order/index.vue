@@ -181,6 +181,7 @@ export default {
     methods: {
         init () {
             setPageTitle('填写订单');
+            this.ticketModalVisible = false;
         },
         bindRegionChange (e) {
             let value = e.target.value;
@@ -233,13 +234,6 @@ export default {
             //判断有无赠品
             if (this.productDetail.gifts && this.productDetail.gifts.length > 0) {
                 params.products[0].gift = this.productDetail.gifts.map(item => item.serial_number);
-            }
-            
-            if (Number(this.productDetail.stock) <= 0) {
-                wx.showModal({
-                    title: '错误',
-                    content: '库存不足了，请大官人再看看别的吧！'
-                })                   
             }
 
             let validater = new ParamsValidate()
@@ -343,7 +337,7 @@ export default {
                 .title {
                     display: inline-block;
                     margin-left: 240px;
-                    font-size: 28px;
+                    font-size: 22px;
                 }
                 .total-price {
                     display: inline-block;

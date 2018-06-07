@@ -96,6 +96,7 @@ export default {
     methods: {
         init () {
             let {productId} = this.$root.$mp.query;
+            this.giftModelVisible = false;
             if (productId) {
                 //获取产品详情信息
                 // productId = 'COMPUTER-654826';
@@ -115,6 +116,13 @@ export default {
         //     this.isShowPartModal = true;
         // },
         toSetOrder () {
+            if (Number(this.productDetail.stock) <= 0) {
+                wx.showModal({
+                    title: '错误',
+                    content: '库存不足了，请大官人再看看别的吧！'
+                })     
+                return              
+            }
             wx.navigateTo({url: `/pages/order/main`})
         },
         toHome () {
