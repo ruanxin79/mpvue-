@@ -15,7 +15,7 @@
                     </div>
                     <div class="order-logistics" v-if="orderList">
                         <div class="userInfo">
-                            <span>{{orderList.customer}} :</span> {{orderList.phone}}
+                            <span>{{orderList.customer}} </span> {{orderList.phone}}
                         </div>
                         <div>{{orderList.address}}</div>
                     </div>
@@ -71,7 +71,7 @@
                 <div class="order-msg">
                     <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderList.code}}</span></p>
                     <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderList.created_at}}</span></p>
-                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.invoice_personal||orderList.invoice_company}}   --   {{orderList.invoice_sign}}</span></p>
+                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.invoice_personal||orderList.invoice_company}}      {{orderList.invoice_sign}}</span></p>
                     <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderList.remark}}</span></p>
                 </div> 
             </scroll-view> 
