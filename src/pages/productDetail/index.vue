@@ -24,6 +24,11 @@
                     <p class="selected-reminder">
                         {{productDetail.gifts && productDetail.gifts.length > 0 ? productDetail.gifts[0].full_name+'...'+productDetail.gifts.length+'个赠品' : ''}}
                     </p>
+                    <div class="point-container">
+                        <span class='point'></span>
+                        <span class='point'></span>
+                        <span class='point'></span>
+                    </div>
                 </section>
 <!--                 <section class="sale-menu" @click="showPartModal">
                     <p class="cont">服务选件</p>
@@ -377,6 +382,7 @@ export default {
             line-height: 80px;
             padding: 0 20px;
             background-color: #fff;
+            position: relative;
             .cont {
                 font-size: 28px;
                 font-weight: 600;
@@ -411,6 +417,25 @@ export default {
                 vertical-align: middle;
                 color: $yellow;
                 margin-left: 14px;                
+            }
+
+
+
+            .point-container {
+                width: 60px;
+                height: 12px;
+                position: absolute;
+                z-index: 100;
+                top: -4px;
+                right: 0;
+                .point {
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    background-color: #ddd;
+                    border-radius: 50%;
+                    margin-left: 6px;
+                }
             }
         }
         .detail-img-cont {

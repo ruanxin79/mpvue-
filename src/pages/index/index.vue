@@ -97,7 +97,7 @@ export default {
             wx.navigateTo({url: `/pages/myOrder/main`})
         }
     },
-    created () {
+    mounted () {
         this.init()
     }
 }

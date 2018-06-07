@@ -10,7 +10,7 @@
                     <img :src="item.thumb" class="thumb"/>
                     <div class="content">
                         <div class="intro">{{item.full_name}}</div>
-                        <div class="price">￥<span class="big">0</span>.00 <span class="orgin-price">￥{{item.package_original_price}}</span></div>
+                        <div class="price">￥<span class="big">0</span>.00 <span class="orgin-price">￥{{item.package_price}}</span></div>
                     </div>
                 </div>
             </scroll-view>

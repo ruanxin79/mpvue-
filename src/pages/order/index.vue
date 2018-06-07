@@ -55,7 +55,6 @@
                     <ul class="parts-content">
                         <li class="parts-content-item" v-for="item in productDetail.gifts" :key="item.id">
                             <div class="name">{{item.abbreviation}}</div>
-                            <div class="price">￥{{item.price}}</div>
                         </li>
                     </ul>
                 </section>
@@ -514,7 +513,7 @@ export default {
                     .name {
                         float: left;
                         margin-left: 14px;
-                        width: 210px;
+                        width: 260px;
                         display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
 
                         -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
