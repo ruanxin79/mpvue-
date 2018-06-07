@@ -12,7 +12,7 @@
         </div>
         <div class="product-text">
           <p class="product-ellipsis">{{k.product_full_name}}</p>
-          <p class="product-price right" v-if=" i == (item.computer.length-1)">共 <span>{{item.computer.length}}</span> 件商品 实付款 : <span>￥{{item.original_total}}</span></p>
+          <p class="product-price right" v-if=" i == (item.computer.length-1)">共 <span>{{item.productnumber || 1}}</span> 件商品 实付款 : <span>￥{{item.original_total}}</span></p>
         </div>
       </div>
       <div class="product-btn" v-if="item.status == 1">
@@ -50,6 +50,7 @@ export default {
       warnSize: 'default',
       orderCode: '',
       Payment: {},
+      num: 1,
       disabled: false,
       plain: false,
       loading: false,
@@ -81,7 +82,8 @@ export default {
           }else if(i.status == this.type) {
             _newArr.push(i)
           }
-        }   
+        }
+           
         return _newArr;
     },
     handlerClick (item) { 
@@ -104,7 +106,15 @@ export default {
             if(res.status_code === 200) {
               this.Payment = res.data;
               this.orderPay();
-            }     
+            } else {
+              wx.hideLoading();
+              wx.showModal({
+                title: '提示',
+                content: res.message
+              })
+            }    
+        }).catch((err)=>{
+          console.log(err)
         })
     },
     /* 订单支付 */

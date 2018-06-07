@@ -125,21 +125,6 @@ const PROMISEINFO = [ {
                     "desc":         "商城所有上架商品均经过精心挑选，我们会选择质量优、用户满意度高的商品。"
                     },
                     {
-                    "title":        "购机用户提供一对一管家服务",
-                    "title_icon":   "管家",
-                    "desc":         "服务管家在机器的购买、使用、维修、更换时提供全流程协助支持。"
-                    },
-                    {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门lenovo",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    {
-                    "title":        "新购机提供一站式上门安装服务",
-                    "title_icon":   "上门think",
-                    "desc":         "购机30天内，智享生活商城免费赠送新机一站式上门安装服务，专业工程师将上门为用户提供开箱验机、网络调试、软件安装、电脑帮教等服务。"
-                    },
-                    {
                     "title":        "全场商品包邮",
                     "title_icon":   "包邮",
                     "desc":         "客户在智享生活商城购买的所有机器和配件（除服务外）等商品均由商城承担运费。"
@@ -264,35 +249,43 @@ export default {
             let _para = {
                 code : item.code
             }
+            wx.showLoading()
             getPayOrder(_para).then( (res) => {
                 if(res.status_code === 200) {
                 this.Payment = res.data;
                 this.orderPay();
+                } else {
+                wx.hideLoading();
+                wx.showModal({
+                    title: '提示',
+                    content: res.message
+                })
                 }     
             })
         },
         /* 订单支付 */
         orderPay () {
             let _this = this;
-            wx.showLoading()
+            wx.hideLoading();
             wx.requestPayment({
             'timeStamp': String(this.Payment.timeStamp),
             'nonceStr': this.Payment.nonceStr,
             'package': this.Payment.package,
             'signType': this.Payment.signType,
             'paySign': this.Payment.paySign,
-            'success':function(res){
-                wx.hideLoading();
+            'success':function(res){      
                 _this.showModal("success")
             },
             'fail':function(res){
-                wx.hideLoading();
                 _this.showModal("err")
             }
             })
         },
         toHome () {
-            wx.navigateBack()
+            //wx.navigateBack()
+            wx.redirectTo({
+                url:  `/pages/index/main`
+            })
             //wx.navigateTo({url: `/pages/index/main`})
         }
     },
