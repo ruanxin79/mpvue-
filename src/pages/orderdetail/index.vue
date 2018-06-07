@@ -11,7 +11,7 @@
                             <span class="icon icon-clock"></span>
                             <span>{{status}}</span>
                         </div>
-                        <div class="acInfo">{{info}}</div>
+                        <div class="acInfo">{{info[orderList.status]}}</div>
                     </div>
                     <div class="order-logistics" v-if="orderList">
                         <div class="userInfo">
@@ -65,42 +65,34 @@
                     </div>
                     <div class="goods-line"><i></i></div>
                     <div class="payment">
-                        <p>需支付<span>￥{{orderList.total}}</span></p>
+                        <p>{{payStatus}}<span>￥{{orderList.total}}</span></p>
                     </div>
                 </div>
                 <div class="order-msg">
                     <p><span class="order-msg-num">订单编号</span> : <span class="msg">{{orderList.code}}</span></p>
                     <p><span class="order-msg-time">下单时间</span> : <span class="msg">{{orderList.created_at}}</span></p>
-                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.invoice_personal}}</span></p>
-                    <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderList.address}}</span></p>
+                    <p><span class="order-msg-receipts">发票信息</span> : <span class="msg">{{orderList.invoice_personal||orderList.invoice_company}}   --   {{orderList.invoice_sign}}</span></p>
+                    <p><span class="order-msg-mark">备&nbsp;&nbsp;注</span> : <span class="msg">{{orderList.remark}}</span></p>
                 </div> 
             </scroll-view> 
             <div class="noOrder" v-else>{{noOrderText}}</div>
-      
-        
         </div> 
-        <PayModal 
-            ref="children"
-            :isShowModal="isShowPayModal"
-            :callbackInfo="callbackInfo"
-            @hideModal="payModalCancel"
-            @getOrderList='getOrderList(1)'>
-        </PayModal>  
         <div class="bottom-menu">
             <div class="btn-container">
                 <div class="btn-item" @click="toHome">
-                    <i class="icon-home sicon-normal"></i>
-                    <span class="words-normal">首页</span>                    
+                    <!-- <i class="icon-home sicon-normal"></i> -->
+                    <span class="words-normal">逛智享生活</span>                    
                 </div>
 
-                <div class="btn-item buy" @click="toPayOrder"  v-if="orderList.status == 1">立即购买</div>
+                <div class="btn-item buy" @click="toPayOrder"  v-if="orderList.status == 1"><span>立即购买</span></div>
                 <!-- <div class="btn-item" v-if="orderList.status != 1">
                     <i class="icon-user sicon-normal"></i>
                     <span class="words-normal">我的订单</span>
                 </div> -->
-
             </div>
         </div> 
+        <SuccessModal v-if="successModalVisible" @hideModal="hideSuccessModal"></SuccessModal>
+        <FailModal v-if="failModalVisible" @hideModal="hideFailModal"></FailModal>
     </div>
 </template>
 
@@ -111,8 +103,9 @@ import store from '../../store'
 import {setPageTitle} from '../../utils/wx'
 
 import { getOrderDetail ,getPayOrder} from '../../utils/api' 
-      
-import  PayModal from "../../components/PayModal"
+
+import SuccessModal from '../../components/SuccessModal'
+import FailModal from '../../components/FailModal'
 
 const PROMISEINFO = [ {
                     "title":        "支持七天无理由退换货",
@@ -132,30 +125,35 @@ const PROMISEINFO = [ {
 export default {
     data () {
         return {
-            info: '好商品不等人，请尽快完成付款',
+            info: [
+                '如需再次购买，请在智享生活商城下单',
+                '好商品不等人，请尽快完成付款',
+                '您的订单已经收到，请耐心等待发货',
+                '您的商品已经发出，请注意查收',
+                '商品已经送达，感谢您在智享商城购物，欢迎您的再次光临'],
             noOrderText: '您还没有相关订单，去智享生活商城看看吧~',
             orderList: {},
             orderDetail: {},
             userInfo: {},
             status: '',
-            callbackInfo: '',
             loadMore: false,
             isShow: false,
-            isShowPayModal: false,
+            successModalVisible: false,
+            failModalVisible: false,
             promiseInfo: PROMISEINFO,
+            payStatus: '',
             code: '',
             id: ''
         }
     },
     components: {
-       PayModal
+       FailModal,
+       SuccessModal
     },
     watch: {
         orderList () {
-            // this.orderList.product.map((k) => {
-            //    k.product_thumb = `https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=802846512,2896553177&fm=173&app=25&f=JPEG?w=218&h=146&s=397843838E5322C47C88EC3C0300F051`
-            // })
             this.status = this.setStatus(this.orderList.status);
+            this.payStatus = this.setPayStatus(this.orderList.status)
         }
     },
     computed: {
@@ -197,6 +195,27 @@ export default {
             })
             this.loadMore = true;
         },
+        setPayStatus (status) {
+            let x = '';
+            switch (status) {
+                case 0:
+                    x = '已付款'
+                    break;
+                case 1:
+                    x = '待付款'
+                    break;
+                case 2:
+                    x = '已付款'
+                    break;
+                case 3:
+                    x = '已付款'
+                    break;
+                case 4:
+                    x = '已付款'
+                    break;
+            }
+            return x;   
+        },
         setStatus (status) {
             let x = '';
             switch (status) {
@@ -226,13 +245,6 @@ export default {
                 })
             }
         },
-        payModalCancel () {
-            this.isShowPayModal = false
-        },
-        showModal (callbackInfo) {
-            this.isShowPayModal = true;
-            this.callbackInfo = callbackInfo;
-        },
         toPayOrder () {
             let item = {
                 code: this.$mp.query.code
@@ -244,44 +256,43 @@ export default {
             let _para = {
                 code : item.code
             }
-            wx.showLoading()
             getPayOrder(_para).then( (res) => {
                 if(res.status_code === 200) {
                 this.Payment = res.data;
                 this.orderPay();
-                } else {
-                wx.hideLoading();
-                wx.showModal({
-                    title: '提示',
-                    content: res.message
-                })
                 }     
             })
         },
         /* 订单支付 */
         orderPay () {
             let _this = this;
-            wx.hideLoading();
+            wx.showLoading()
             wx.requestPayment({
             'timeStamp': String(this.Payment.timeStamp),
             'nonceStr': this.Payment.nonceStr,
             'package': this.Payment.package,
             'signType': this.Payment.signType,
             'paySign': this.Payment.paySign,
-            'success':function(res){      
-                _this.showModal("success")
+            'success':function(res){
+                wx.hideLoading();
+                _this.successModalVisible = true;
             },
             'fail':function(res){
-                _this.showModal("err")
+                wx.hideLoading();
+                _this.failModalVisible = true;
             }
             })
         },
+        hideSuccessModal () {
+            this.successModalVisible = false;
+        },
+        hideFailModal () {
+            this.failModalVisible = false;
+        },
         toHome () {
-            //wx.navigateBack()
-            wx.redirectTo({
-                url:  `/pages/index/main`
+            wx.reLaunch({
+                url: `/pages/index/main`
             })
-            //wx.navigateTo({url: `/pages/index/main`})
         }
     },
     created () {
@@ -311,27 +322,31 @@ export default {
             bottom: 0;
             width: 100%;
             height: 106px;
+            line-height: 106px;
             z-index: 10px;
             background-color: #f9f9f9;
 
             .btn-container {
                 width: 100%;
                 height: 100%;
-                display: flex;
-                flex-direction: row;
+                text-align: right;
+                // display: flex;
+                // flex-direction: row;
                 .btn-item {
-                    width: 50%;
-                    height: 100%;
-                    flex-direction: column;
-                    flex: 1;
+                    display: inline;
                     text-align: center;
+                    margin-right: 10px; 
                 }
                 .btn-item.buy {
-                    font-size: 40px;
+                    font-size: 30px;
                     text-align: center;
-                    line-height: 106px;
-                    color: #fff;
-                    background-color: $yellow;
+                    color: $red;
+                    border: 1px solid $red;
+                    border-radius: 5px; 
+                    display: inline-block;
+                    height: 70px;
+                    line-height: 70px;
+                    width: 180px;
                 }
                 .sicon-normal {
                     font-size: 30px;
@@ -344,8 +359,14 @@ export default {
                     color: $yellow;
                 }
                 .words-normal {
-                    font-size: 26px;
+                    font-size: 30px;
                     color: #999;
+                    border: 1px solid #999;
+                    border-radius: 5px; 
+                    display: inline-block;
+                    height: 70px;
+                    line-height: 70px;
+                    width: 180px;
                 }
                 .words-active {
                     font-size: 26px;
@@ -373,6 +394,8 @@ export default {
             }
             .acInfo {
                 font-size: 22px;
+                width: 80%;
+                margin: 0 auto;
             }
         }
         .order-detail {
@@ -503,7 +526,7 @@ export default {
                     margin-right: 5px;
                 }
                 .left {
-                    max-width: 216px;
+                    width: 216px;
                     height: 45px;
                     overflow: hidden;
                 }
