@@ -12,7 +12,7 @@
         </div>
         <div class="product-text">
           <p class="product-ellipsis">{{k.product_full_name}}</p>
-          <p class="product-price right" v-if=" i == (item.computer.length-1)">共 <span>{{item.productnumber || 1}}</span> 件商品 实付款 : <span>￥{{item.original_total}}</span></p>
+          <p class="product-price right" v-if=" i == (item.computer.length-1)">共 <span>{{item.productNumber || 1}}</span> 件商品 实付款 : <span>￥{{item.original_total}}</span></p>
         </div>
       </div>
       <div class="product-btn" v-if="item.status == 1">
